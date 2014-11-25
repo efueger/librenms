@@ -58,7 +58,7 @@ function discover_new_device($hostname)
 
 function discover_device($device, $options = NULL)
 {
-  global $config, $valid;
+  global $config, $valid, $exec_response;
 
   $valid = array(); // Reset $valid array
 
