@@ -181,7 +181,6 @@ if distpoll is True and IsNode is False:
     maxlocks = devices[0][0]
     minlocks = devices[0][1]
 # EOC3
-db.close()
 
 """
     A seperate queue and a single worker for printing information to the screen prevents
@@ -318,6 +317,17 @@ if distpoll == True or memc_alive() is True:
 
 show_stopper = False
 
+query = "update pollers set last_polled=NOW(), devices='%d', time_taken='%d' where poller_name='%s'" % (polled_devices, total_time, config['distributed_poller_name'])
+response = cursor.execute(query)
+if response == 1:
+    db.commit()
+else:
+    query = "insert into pollers set poller_name='%s', last_polled=NOW(), devices='%d', time_taken='%d'" % (config['distributed_poller_name'],polled_devices, total_time)
+    cursor.execute(query)
+    db.commit()
+db.close()
+
+
 if total_time > 300:
     recommend = int(total_time / 300.0 * amount_of_workers + 1)
     print "WARNING: the process took more than 5 minutes to finish, you need faster hardware or more threads"
@@ -330,4 +340,5 @@ if total_time > 300:
         print "ERROR: Some devices are taking more than 300 seconds, the script cannot recommend you what to do."
     if show_stopper == False:
         print "WARNING: Consider setting a minimum of %d threads. (This does not constitute professional advice!)" % recommend
+
     sys.exit(2)
