@@ -244,7 +244,11 @@ def poll_worker():
 # (c) 2015, GPLv3, Daniel Preussker <f0o@devilcode.org> <<<EOC5
         if distpoll == False or memc.get('poller.device.'+str(device_id)) == None:
             if distpoll == True:
-                memc.set('poller.device.'+str(device_id),config['distributed_poller_name'],300)
+                result = memc.add('poller.device.'+str(device_id),config['distributed_poller_name'],300)
+                if result == False:
+                    print "This device (%s) appears to be being polled by another poller" % (device_id)
+                    poll_queue.task_done()
+                    continue
                 if memc_alive() == False and IsNode is True:
                     print "Lost Memcached, Not polling Device %s as Node. Master will poll it." % device_id
                     poll_queue.task_done()
