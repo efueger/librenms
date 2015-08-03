@@ -245,13 +245,15 @@ else {
         <th>Allowed</th>
         <th>Used</th>
         <th>Overusage</th>
+        <th># Ports</th>
         <th></th>
         <th></th>
         </tr>";
-    foreach (dbFetchRows('SELECT * FROM `bills` ORDER BY `bill_name`') as $bill) {
+    foreach (dbFetchRows("SELECT `bills`.*,COUNT(port_id) AS `ports_total` FROM `bills` LEFT JOIN `bill_ports` ON `bill_ports`.`bill_id`=`bills`.`bill_id` GROUP BY `bill_name`,`bill_ref` ORDER BY `bill_name`") as $bill) {
         if (bill_permitted($bill['bill_id'])) {
             unset($class);
             $day_data = getDates($bill['bill_day']);
+            $ports_total  = $bill['ports_total'];
             $datefrom = $day_data['0'];
             $dateto   = $day_data['1'];
             // $rate_data    = getRates($bill['bill_id'],$datefrom,$dateto);
@@ -298,6 +300,7 @@ else {
                 <td>$allowed</td>
                 <td>$used</td>
                 <td style=\"text-align: center;\">$overuse</td>
+                <td><h4><span class=\"label label-primary threeqtr-width\">$ports_total</span></h4></td>
                 <td>".print_percentage_bar(250, 20, $percent, null, 'ffffff', $background['left'], $percent.'%', 'ffffff', $background['right'])."</td>
                 <td><a href='".generate_url(array('page' => 'bill', 'bill_id' => $bill['bill_id'], 'view' => 'edit'))."'><img src='images/16/wrench.png' align=absmiddle alt='Edit'> Edit</a></td>
                 </tr>
