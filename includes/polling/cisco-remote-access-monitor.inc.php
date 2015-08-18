@@ -35,7 +35,7 @@ if ($device['os_group'] == 'cisco') {
     $data     = snmp_get_multi($device, $oid_list, '-OUQs', 'CISCO-REMOTE-ACCESS-MONITOR-MIB');
     $data     = $data[0];
 
-    $rrd_filename = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('cras_sessions.rrd');
+    $rrd_filename = 'cras_sessions.rrd';
 
     $rrd_create .= ' DS:email:GAUGE:600:0:U';
     $rrd_create .= ' DS:ipsec:GAUGE:600:0:U';
@@ -45,24 +45,23 @@ if ($device['os_group'] == 'cisco') {
     $rrd_create .= ' DS:webvpn:GAUGE:600:0:U';
     $rrd_create .= $config['rrd_rra'];
 
-    if (is_file($rrd_filename) || $data['crasEmailNumSessions'] || $data['crasIPSecNumSessions'] || $data['crasL2LNumSessions'] || $data['crasLBNumSessions'] || $data['crasSVCNumSessions'] || $data['crasWebvpnSessions']) {
-        if (!file_exists($rrd_filename)) {
-            rrdtool_create($rrd_filename, $rrd_create);
-        }
+    if ($data['crasEmailNumSessions'] || $data['crasIPSecNumSessions'] || $data['crasL2LNumSessions'] || $data['crasLBNumSessions'] || $data['crasSVCNumSessions'] || $data['crasWebvpnSessions']) {
+        rrdtool_create($rrd_filename, $rrd_create);
 
-        $rrd_update  = 'N';
-        $rrd_update .= ':'.$data['crasEmailNumSessions'];
-        $rrd_update .= ':'.$data['crasIPSecNumSessions'];
-        $rrd_update .= ':'.$data['crasL2LNumSessions'];
-        $rrd_update .= ':'.$data['crasLBNumSessions'];
-        $rrd_update .= ':'.$data['crasSVCNumSessions'];
-        $rrd_update .= ':'.$data['crasWebvpnNumSessions'];
+        $fields = array(
+            'email'   => $data['crasEmailNumSessions'],
+            'ipsec'   => $data['crasIPSecNumSessions'],
+            'l2l'     => $data['crasL2LNumSessions'],
+            'lb'      => $data['crasLBNumSessions'],
+            'svc'     => $data['crasSVCNumSessions'],
+            'webvpn'  => $data['crasWebvpnNumSessions'],
+        );
 
-        rrdtool_update($rrd_filename, $rrd_update);
+        rrdtool_update($rrd_filename, $fields);
 
         $graphs['cras_sessions'] = true;
         echo ' CRAS Sessions';
     }
 
-    unset($data, $$rrd_filename, $rrd_create, $rrd_update);
+    unset($data, $$rrd_filename, $rrd_create, $fields);
 }//end if

@@ -28,15 +28,19 @@ if ($device['os_group'] == "cisco") {
     $active = $active['1.3.6.1.4.1.9.10.19.1.1.4.0'][''];
 
     if (isset($active) && ($active != "") && ($total != 0)) {
-        $rrd_filename = $config['rrd_dir'] . "/" . $device['hostname'] . "/" . safename ("cisco-iospri.rrd");
+        $rrd_filename = 'cisco-iospri.rrd';
 
-        if (!file_exists ($rrd_filename)) {
-            rrdtool_create ($rrd_filename, " DS:total:GAUGE:600:0:U DS:active:GAUGE:600:0:U" . $config['rrd_rra']);
-        }
-        rrdtool_update ($rrd_filename, "N:" . $total . ":" . $active);
+        rrdtool_create ($rrd_filename, " DS:total:GAUGE:600:0:U DS:active:GAUGE:600:0:U" . $config['rrd_rra']);
+
+        $fields = array(
+            'total'  => $total,
+            'active' => $active,
+        );
+
+        rrdtool_update ($rrd_filename, $fields);
 
         $graphs['cisco-iospri'] = TRUE;
         echo (" Cisco IOS PRI ");
     }
-    unset($rrd_filename, $total, $active);
+    unset($rrd_filename, $total, $active, $fields);
 }

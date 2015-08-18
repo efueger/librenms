@@ -43,7 +43,7 @@ if (isset($port_stats[$port['ifIndex']]['adslLineCoding'])) {
     // Check to make sure Port data is cached.
     $this_port = &$port_stats[$port['ifIndex']];
 
-    $rrdfile = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('port-'.$port['ifIndex'].'-adsl.rrd');
+    $rrdfile = 'port-'.$port['ifIndex'].'-adsl.rrd';
 
     $rrd_create  = ' --step 300';
     $rrd_create .= ' DS:AtucCurrSnrMgn:GAUGE:600:0:635';
@@ -151,23 +151,20 @@ if (isset($port_stats[$port['ifIndex']]['adslLineCoding'])) {
         $this_port['adslAturCurrSnrMgn'] = 'U';
     }
 
-    $rrdupdate = 'N';
+    $fields = array();
     foreach ($adsl_oids as $oid) {
         $oid  = 'adsl'.$oid;
         $data = str_replace('"', '', $this_port[$oid]);
         // Set data to be "unknown" if it's garbled, unexistant or zero
         if (!is_numeric($data)) {
-            $data = 'U';
+            $data = ':U';
         }
 
-        $rrdupdate .= ":$data";
+        $fields[$oid] = $data;
     }
 
-    if (!is_file($rrdfile)) {
-        rrdtool_create($rrdfile, $rrd_create);
-    }
-
-    rrdtool_update($rrdfile, $rrdupdate);
+    rrdtool_create($rrdfile, $rrd_create);
+    rrdtool_update($rrdfile, $fields);
 
     echo 'ADSL ('.$this_port['adslLineCoding'].'/'.formatRates($this_port['adslAtucChanCurrTxRate']).'/'.formatRates($this_port['adslAturChanCurrTxRate']).')';
 }//end if

@@ -24,7 +24,7 @@ if ($device['os'] != 'Snom') {
     );
 
     unset($snmpstring, $rrdupdate, $snmpdata, $snmpdata_cmd, $rrd_create);
-    $rrd_file = $config['rrd_dir'].'/'.$device['hostname'].'/netstats-ip.rrd';
+    $rrd_file = 'netstats-ip.rrd';
 
     $rrd_create = $config['rrd_rra'];
 
@@ -36,7 +36,7 @@ if ($device['os'] != 'Snom') {
 
     $data = snmp_get_multi($device, $snmpstring, '-OQUs', 'IP-MIB');
 
-    $rrdupdate = 'N';
+    $fields = array();
 
     foreach ($oids as $oid) {
         if (is_numeric($data[0][$oid])) {
@@ -46,15 +46,12 @@ if ($device['os'] != 'Snom') {
             $value = 'U';
         }
 
-        $rrdupdate .= ":$value";
+        $fields[$oid] = $value;
     }
 
     if (isset($data[0]['ipOutRequests']) && isset($data[0]['ipInReceives'])) {
-        if (!file_exists($rrd_file)) {
-            rrdtool_create($rrd_file, $rrd_create);
-        }
-
-        rrdtool_update($rrd_file, $rrdupdate);
+        rrdtool_create($rrd_file, $rrd_create);
+        rrdtool_update($rrd_file, $fields);
         $graphs['netstat_ip']      = true;
         $graphs['netstat_ip_frag'] = true;
     }

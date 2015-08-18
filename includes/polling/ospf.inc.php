@@ -359,21 +359,25 @@ if (is_array($ospf_nbrs_db)) {
 }//end if
 
 // Create device-wide statistics RRD
-$filename = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('ospf-statistics.rrd');
+$filename = 'ospf-statistics.rrd';
 
-if (!is_file($filename)) {
-    rrdtool_create(
-        $filename,
-        '--step 300 \
-            DS:instances:GAUGE:600:0:1000000 \
-                DS:areas:GAUGE:600:0:1000000 \
-                    DS:ports:GAUGE:600:0:1000000 \
-                        DS:neighbours:GAUGE:600:0:1000000 '.$config['rrd_rra']
-                    );
-}
+rrdtool_create(
+    $filename,
+    '--step 300 \
+    DS:instances:GAUGE:600:0:1000000 \
+    DS:areas:GAUGE:600:0:1000000 \
+    DS:ports:GAUGE:600:0:1000000 \
+    DS:neighbours:GAUGE:600:0:1000000 '.$config['rrd_rra']
+);
 
-$rrd_update = 'N:'.$ospf_instance_count.':'.$ospf_area_count.':'.$ospf_port_count.':'.$ospf_neighbour_count;
-$ret        = rrdtool_update("$filename", $rrd_update);
+$fields = array(
+    'instances'   => $ospf_instance_count,
+    'areas'       => $ospf_area_count,
+    'ports'       => $ospf_port_count,
+    'neighbours'  => $ospf_neighbour_count,
+);
+
+$ret        = rrdtool_update("$filename", $fields);
 
 unset($ospf_ports_db);
 unset($ospf_ports_poll);

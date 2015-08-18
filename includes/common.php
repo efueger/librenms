@@ -124,10 +124,10 @@ function get_sensor_rrd($device, $sensor) {
 
     # For IPMI, sensors tend to change order, and there is no index, so we prefer to use the description as key here.
     if ($config['os'][$device['os']]['sensor_descr'] || $sensor['poller_type'] == "ipmi") {
-        $rrd_file = $config['rrd_dir']."/".$device['hostname']."/".safename("sensor-".$sensor['sensor_class']."-".$sensor['sensor_type']."-".$sensor['sensor_descr'] . ".rrd");
+        $rrd_file = "sensor-".$sensor['sensor_class']."-".$sensor['sensor_type']."-".$sensor['sensor_descr'] . ".rrd";
     }
     else {
-        $rrd_file = $config['rrd_dir']."/".$device['hostname']."/".safename("sensor-".$sensor['sensor_class']."-".$sensor['sensor_type']."-".$sensor['sensor_index'] . ".rrd");
+        $rrd_file = "sensor-".$sensor['sensor_class']."-".$sensor['sensor_type']."-".$sensor['sensor_index'] . ".rrd";
     }
 
     return($rrd_file);
@@ -637,8 +637,7 @@ function name_shorten($name, $common = null, $subst = "mibval", $len = 19) {
  */
 function rrd_name($host, $extra, $exten = ".rrd") {
     global $config;
-    $filename = safename(is_array($extra) ? implode("-", $extra) : $extra);
-    return implode("/", array($config['rrd_dir'], $host, $filename.$exten));
+    return safename(is_array($extra) ? implode("-", $extra) : $extra);
 }
 
 /*

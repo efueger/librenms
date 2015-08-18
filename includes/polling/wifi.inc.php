@@ -69,33 +69,37 @@ if ($device['type'] == 'network' || $device['type'] == 'firewall' || $device['ty
 
     // # RRD Filling Code
     if (isset($wificlients1) && $wificlients1 != '') {
-        $wificlientsrrd = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('wificlients-radio1.rrd');
+        $wificlientsrrd = 'wificlients-radio1.rrd';
 
-        if (!is_file($wificlientsrrd)) {
-            rrdtool_create(
-                $wificlientsrrd,
-                '--step 300 \
-                DS:wificlients:GAUGE:600:-273:1000 '.$config['rrd_rra']
-            );
-        }
+        rrdtool_create(
+            $wificlientsrrd,
+            '--step 300 \
+            DS:wificlients:GAUGE:600:-273:1000 '.$config['rrd_rra']
+        );
 
-        rrdtool_update($wificlientsrrd, array($wificlients1));
+        $fields = array(
+            'wificlients' => $wificlients1,
+        );
+
+        rrdtool_update($wificlientsrrd, $fields);
 
         $graphs['wifi_clients'] = true;
     }
 
     if (isset($wificlients2) && $wificlients2 != '') {
-        $wificlientsrrd = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('wificlients-radio2.rrd');
+        $wificlientsrrd = 'wificlients-radio2.rrd';
 
-        if (!is_file($wificlientsrrd)) {
-            rrdtool_create(
-                $wificlientsrrd,
-                '--step 300 \
-                DS:wificlients:GAUGE:600:-273:1000 '.$config['rrd_rra']
-            );
-        }
+        rrdtool_create(
+            $wificlientsrrd,
+            '--step 300 \
+            DS:wificlients:GAUGE:600:-273:1000 '.$config['rrd_rra']
+        );
 
-        rrdtool_update($wificlientsrrd, array($wificlients2));
+        $fields = array(
+            'wificlients' => $wificlients2,
+        );
+
+        rrdtool_update($wificlientsrrd, $fields);
 
         $graphs['wifi_clients'] = true;
     }

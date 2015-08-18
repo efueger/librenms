@@ -13,15 +13,11 @@ if (!empty($agent_data['munin'])) {
         $plugins_db[$plugin_db['mplug_type']]['id'] = $plugin_db['mplug_id'];
     }
 
-    $old_plugins_rrd_dir = $host_rrd.'/plugins';
-    $plugins_rrd_dir     = $host_rrd.'/munin';
-    if (is_dir($old_plugins_rrd_dir) && !is_dir($plugins_rrd_dir)) {
-        rename($old_plugins_dir, $plugins_dir);
-    }
+    $plugins_rrd_dir     = 'munin';
 
-    if (!is_dir($plugins_rrd_dir)) {
-        mkdir($plugins_rrd_dir);
-        echo "Created directory : $plugins_rrd_dir\n";
+    if (!is_dir($host_rrd.'/'.$plugins_rrd_dir)) {
+        mkdir($host_rrd.'/'.$plugins_rrd_dir);
+        echo "Created directory : $host_rrd.'/'.$plugins_rrd_dir\n";
     }
 
     $plugin = array();
@@ -105,11 +101,13 @@ if (!empty($agent_data['munin'])) {
                 $cmd     .= $config['rrd_rra'];
                 $ds_uniq  = $mplug_id.'_'.$name;
                 $filename = $plugin_rrd.'_'.$name.'.rrd';
-                if (!is_file($filename)) {
-                    rrdtool_create($filename, $cmd);
-                }
+                rrdtool_create($filename, $cmd);
 
-                rrdtool_update($filename, 'N:'.$data['value']);
+                $fields = array(
+                    'val' => $data['value'],
+                );
+
+                rrdtool_update($filename, $fields);
 
                 if (empty($ds_list[$ds_uniq])) {
                     $insert = array(

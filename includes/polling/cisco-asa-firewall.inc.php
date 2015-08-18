@@ -29,23 +29,22 @@ if ($device['os_group'] == 'cisco' && $device['os'] == 'asa' && $device['type'] 
         $data[$oid]['db_id'] = $asa_db;
     }
 
-    $rrd_filename = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('asa_conns.rrd');
+    $rrd_filename = 'asa_conns.rrd';
 
     $rrd_create .= ' DS:connections:GAUGE:600:0:U';
     $rrd_create .= $config['rrd_rra'];
 
-    if (is_file($rrd_filename) || $data['currentInUse']) {
-        if (!file_exists($rrd_filename)) {
-            rrdtool_create($rrd_filename, $rrd_create);
-        }
+    if ($data['currentInUse']) {
+        rrdtool_create($rrd_filename, $rrd_create);
 
-        $rrd_update  = 'N';
-        $rrd_update .= ':'.$data['currentInUse']['data'];
+        $fields = array(
+            'connections' => $data['currentInUse']['data'],
+        );
 
-        rrdtool_update($rrd_filename, $rrd_update);
+        rrdtool_update($rrd_filename, $fields);
         $graphs['asa_conns'] = true;
         echo ' ASA Connections';
     }
 
-    unset($data,$rrd_filename,$rrd_create,$rrd_update);
+    unset($data,$rrd_filename,$rrd_create);
 }//end if

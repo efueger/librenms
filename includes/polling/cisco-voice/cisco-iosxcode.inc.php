@@ -24,14 +24,18 @@ if ($device['os_group'] == "cisco") {
         // Active
         $active = $total - $available;
 
-        $rrd_filename = $config['rrd_dir'] . "/" . $device['hostname'] . "/" . safename ("cisco-iosxcode.rrd");
-        if (!file_exists ($rrd_filename)) {
-            rrdtool_create ($rrd_filename, " DS:total:GAUGE:600:0:U DS:active:GAUGE:600:0:U" . $config['rrd_rra']);
-        }
-        rrdtool_update ($rrd_filename, "N:" . $total . ":" . $active);
+        $rrd_filename = 'cisco-iosxcode.rrd';
+        rrdtool_create ($rrd_filename, " DS:total:GAUGE:600:0:U DS:active:GAUGE:600:0:U" . $config['rrd_rra']);
+
+        $fields = array(
+            'total'  => $total,
+            'active' => $active,
+        );
+
+        rrdtool_update ($rrd_filename, $fields);
 
         $graphs['cisco-iosxcode'] = TRUE;
         echo (" Cisco IOS Transcoder ");
     }
-    unset($rrd_filename, $total, $active, $available);
+    unset($rrd_filename, $total, $active, $available, $fields);
 }

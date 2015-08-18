@@ -84,15 +84,15 @@ if ($device['os'] == 'netscaler') {
     foreach ($vsvr_array as $index => $vsvr) {
         if (isset($vsvr['vsvrName'])) {
             $vsvr_exist[$vsvr['vsvrName']] = 1;
-            $rrd_file  = $config['rrd_dir'].'/'.$device['hostname'].'/netscaler-vsvr-'.safename($vsvr['vsvrName']).'.rrd';
-            $rrdupdate = 'N';
+            $rrd_file  = 'netscaler-vsvr-'.$vsvr['vsvrName'].'.rrd';
+            $fields = array();
 
             foreach ($oids as $oid) {
                 if (is_numeric($vsvr[$oid])) {
-                    $rrdupdate .= ':'.$vsvr[$oid];
+                    $fields[$oid] = $vsvr[$oid];
                 }
                 else {
-                    $rrdupdate .= ':U';
+                    $fields[$oid] = 'U';
                 }
             }
 
@@ -119,13 +119,10 @@ if ($device['os'] == 'netscaler') {
                 echo ' U';
             }
 
-            if (!file_exists($rrd_file)) {
-                rrdtool_create($rrd_file, $rrd_create);
-            }
+            rrdtool_create($rrd_file, $rrd_create);
+            rrdtool_update($rrd_file, $fields);
 
-                rrdtool_update($rrd_file, $rrdupdate);
-
-                echo "\n";
+            echo "\n";
         }//end if
     }//end foreach
 

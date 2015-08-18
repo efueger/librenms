@@ -1,8 +1,8 @@
 <?php
 
-$load_rrd = $host_rrd.'/ucd_load.rrd';
-$cpu_rrd  = $host_rrd.'/ucd_cpu.rrd';
-$mem_rrd  = $host_rrd.'/ucd_mem.rrd';
+$load_rrd = 'ucd_load.rrd';
+$cpu_rrd  = 'ucd_cpu.rrd';
+$mem_rrd  = 'ucd_mem.rrd';
 
 // Poll systemStats from UNIX-like hosts running UCD/Net-SNMPd
 // UCD-SNMP-MIB::ssIndex.0 = INTEGER: 1
@@ -44,11 +44,16 @@ $cpu_rrd_create = ' --step 300 \
 // and because it is per-host and no big performance hit. See new format below
 // FIXME REMOVE
 if (is_numeric($ss['ssCpuRawUser']) && is_numeric($ss['ssCpuRawNice']) && is_numeric($ss['ssCpuRawSystem']) && is_numeric($ss['ssCpuRawIdle'])) {
-    if (!is_file($cpu_rrd)) {
-        rrdtool_create($cpu_rrd, $cpu_rrd_create);
-    }
+    rrdtool_create($cpu_rrd, $cpu_rrd_create);
 
-    rrdtool_update($cpu_rrd, array($ss['ssCpuRawUser'], $ss['ssCpuRawSystem'], $ss['ssCpuRawNice'], $ss['ssCpuRawIdle']));
+    $fields = array(
+        'user'    => $ss['ssCpuRawUser'],
+        'system'  => $ss['ssCpuRawSystem'],
+        'nice'    => $ss['ssCpuRawNice'],
+        'idle'    => $ss['ssCpuRawIdle'],
+    );
+
+    rrdtool_update($cpu_rrd, $fields);
     $graphs['ucd_cpu'] = true;
 }
 
@@ -74,11 +79,13 @@ foreach ($collect_oids as $oid) {
     if (is_numeric($ss[$oid])) {
         $value    = $ss[$oid];
         $filename = $host_rrd.'/ucd_'.$oid.'.rrd';
-        if (!is_file($filename)) {
-            rrdtool_create($filename, ' --step 300 DS:value:COUNTER:600:0:U '.$config['rrd_rra']);
-        }
+        rrdtool_create($filename, ' --step 300 DS:value:COUNTER:600:0:U '.$config['rrd_rra']);
 
-        rrdtool_update($filename, 'N:'.$value);
+        $fields = array(
+            'value' => $value,
+        );
+
+        rrdtool_update($filename, $fields);
         $graphs['ucd_cpu'] = true;
     }
 }
@@ -141,7 +148,18 @@ if (is_numeric($memTotalReal) && is_numeric($memAvailReal) && is_numeric($memTot
         rrdtool_create($mem_rrd, $mem_rrd_create);
     }
 
-    rrdtool_update($mem_rrd, array($memTotalSwap, $memAvailSwap, $memTotalReal, $memAvailReal, $memTotalFree, $memShared, $memBuffer, $memCached));
+    $fields = array(
+        'totalswap'    => $memTotalSwap,
+        'availswap'    => $memAvailSwap,
+        'totalreal'    => $memTotalReal,
+        'availreal'    => $memAvailReal,
+        'totalfree'    => $memTotalFree,
+        'shared'       => $memShared,
+        'buffered'     => $memBuffer,
+        'cached'       => $memCached,
+    );
+
+    rrdtool_update($mem_rrd, $fields);
     $graphs['ucd_memory'] = true;
 }
 
@@ -158,7 +176,13 @@ if (is_numeric($load_raw[2]['laLoadInt'])) {
         rrdtool_create($load_rrd, ' --step 300 DS:1min:GAUGE:600:0:5000 DS:5min:GAUGE:600:0:5000 DS:15min:GAUGE:600:0:5000 '.$config['rrd_rra']);
     }
 
-    rrdtool_update($load_rrd, array($load_raw[1]['laLoadInt'], $load_raw[2]['laLoadInt'], $load_raw[3]['laLoadInt']));
+    $fields = array(
+        '1min'   => $load_raw[1]['laLoadInt'],
+        '5min'   => $load_raw[2]['laLoadInt'],
+        '15min'  => $load_raw[3]['laLoadInt'],
+    );
+
+    rrdtool_update($load_rrd, $fields);
     $graphs['ucd_load'] = 'TRUE';
 }
 

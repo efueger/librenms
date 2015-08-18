@@ -5,11 +5,9 @@ $storage_cache = array();
 foreach (dbFetchRows('SELECT * FROM storage WHERE device_id = ?', array($device['device_id'])) as $storage) {
     echo 'Storage '.$storage['storage_descr'].': ';
 
-    $storage_rrd = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('storage-'.$storage['storage_mib'].'-'.safename($storage['storage_descr']).'.rrd');
+    $storage_rrd = 'storage-'.$storage['storage_mib'].'-'.$storage['storage_descr'].'.rrd';
 
-    if (!is_file($storage_rrd)) {
-        rrdtool_create($storage_rrd, '--step 300 DS:used:GAUGE:600:0:U DS:free:GAUGE:600:0:U '.$config['rrd_rra']);
-    }
+    rrdtool_create($storage_rrd, '--step 300 DS:used:GAUGE:600:0:U DS:free:GAUGE:600:0:U '.$config['rrd_rra']);
 
     $file = $config['install_dir'].'/includes/polling/storage/'.$storage['storage_mib'].'.inc.php';
     if (is_file($file)) {
@@ -32,7 +30,12 @@ foreach (dbFetchRows('SELECT * FROM storage WHERE device_id = ?', array($device[
 
     echo $percent.'% ';
 
-    rrdtool_update($storage_rrd, 'N:'.$storage['used'].':'.$storage['free']);
+    $fields = array(
+        'used'   => $storage['used'],
+        'free'   => $storage['free'],
+    );
+
+    rrdtool_update($storage_rrd, $fields);
 
     if ($config['memcached']['enable'] === true) {
         $memcache->set('storage-'.$storage['storage_id'].'-used', $storage['used']);

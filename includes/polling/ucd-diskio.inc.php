@@ -19,24 +19,25 @@ if (count($diskio_data)) {
             print_r($entry);
         }
 
-        $rrd = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('ucd_diskio-'.$diskio['diskio_descr'].'.rrd');
+        $rrd = 'ucd_diskio-'.$diskio['diskio_descr'].'.rrd';
 
-        if ($debug) {
-            echo "$rrd ";
-        }
+        rrdtool_create(
+            $rrd,
+            '--step 300 \
+            DS:read:DERIVE:600:0:125000000000 \
+            DS:written:DERIVE:600:0:125000000000 \
+            DS:reads:DERIVE:600:0:125000000000 \
+            DS:writes:DERIVE:600:0:125000000000 '.$config['rrd_rra']
+        );
 
-        if (!is_file($rrd)) {
-            rrdtool_create(
-                $rrd,
-                '--step 300 \
-      DS:read:DERIVE:600:0:125000000000 \
-      DS:written:DERIVE:600:0:125000000000 \
-      DS:reads:DERIVE:600:0:125000000000 \
-      DS:writes:DERIVE:600:0:125000000000 '.$config['rrd_rra']
-            );
-        }
+        $fields = array(
+            'read'    => $entry['diskIONReadX'],
+            'written' => $entry['diskIONWrittenX'],
+            'reads'   => $entry['diskIOReads'],
+            'writes'  => $entry['diskIOWrites'],
+        );
 
-        rrdtool_update($rrd, array($entry['diskIONReadX'], $entry['diskIONWrittenX'], $entry['diskIOReads'], $entry['diskIOWrites']));
+        rrdtool_update($rrd, $fields);
     }//end foreach
 
     echo "\n";

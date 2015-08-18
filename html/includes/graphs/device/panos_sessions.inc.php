@@ -1,6 +1,6 @@
 <?php
 
-$rrd_filename = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('panos-sessions.rrd');
+$rrd_filename = 'panos-sessions.rrd';
 
 $ds = 'sessions';
 

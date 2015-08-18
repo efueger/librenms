@@ -37,28 +37,28 @@ unset($sla);
 foreach (dbFetchRows('SELECT * FROM `slas` WHERE `device_id` = ? AND `deleted` = 0 AND `status` = 1', array($device['device_id'])) as $sla) {
     echo 'SLA '.$sla['sla_nr'].': '.$sla['rtt_type'].' '.$sla['owner'].' '.$sla['tag'].'... ';
 
-    $slarrd = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('sla-'.$sla['sla_nr'].'.rrd');
+    $slarrd = 'sla-'.$sla['sla_nr'].'.rrd';
 
-    if (!is_file($slarrd)) {
-        rrdtool_create(
-            $slarrd,
-            '--step 300 \
-     DS:rtt:GAUGE:600:0:300000 '.$config['rrd_rra']
-        );
-    }
+    rrdtool_create(
+        $slarrd,
+        '--step 300 \
+        DS:rtt:GAUGE:600:0:300000 '.$config['rrd_rra']
+    );
 
     if (isset($sla_table[$sla['sla_nr']])) {
         $slaval = $sla_table[$sla['sla_nr']];
         echo $slaval['CompletionTime'].'ms at '.$slaval['TimeStr'];
-        $ts  = $slaval['UnixTime'];
         $val = $slaval['CompletionTime'];
     }
     else {
         echo 'NaN';
-        $ts  = 'N';
         $val = 'U';
     }
 
-    rrdtool_update($slarrd, $ts.':'.$val);
+    $fields = array(
+        'rtt' => $val,
+    );
+
+    rrdtool_update($slarrd, $fields);
     echo "\n";
 }//end foreach

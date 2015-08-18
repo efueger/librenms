@@ -13,5 +13,5 @@ if (is_numeric($vars['id']) && ($auth || port_permitted($vars['id']))) {
 
     $auth = true;
 
-    $rrd_filename = $config['rrd_dir'].'/'.$device['hostname'].'/port-'.safename($port['ifIndex'].'.rrd');
+    $rrd_filename = 'port-'.$port['ifIndex'].'.rrd';
 }

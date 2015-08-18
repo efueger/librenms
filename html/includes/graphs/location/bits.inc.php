@@ -24,8 +24,8 @@ foreach ($devices as $device) {
             }
         }
 
-        if (is_file($config['rrd_dir'].'/'.$device['hostname'].'/port-'.safename($int['ifIndex'].'.rrd')) && $ignore != 1) {
-            $rrd_filename              = $config['rrd_dir'].'/'.$device['hostname'].'/port-'.safename($int['ifIndex'].'.rrd');
+        if ($ignore != 1) {
+            $rrd_filename              = 'port-'.$int['ifIndex'].'.rrd';
             $rrd_list[$i]['filename']  = $rrd_filename;
             $rrd_list[$i]['descr']     = $port['label'];
             $rrd_list[$i]['descr_in']  = $device['hostname'];

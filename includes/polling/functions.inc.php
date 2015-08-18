@@ -95,17 +95,19 @@ function poll_sensor($device, $class, $unit) {
 
         $rrd_file = get_sensor_rrd($device, $sensor);
 
-        if (!is_file($rrd_file)) {
-            rrdtool_create(
-                $rrd_file,
-                '--step 300 \
-                DS:sensor:GAUGE:600:-20000:20000 '.$config['rrd_rra']
-            );
-        }
+        rrdtool_create(
+            $rrd_file,
+            '--step 300 \
+            DS:sensor:GAUGE:600:-20000:20000 '.$config['rrd_rra']
+        );
 
         echo "$sensor_value $unit\n";
 
-        rrdtool_update($rrd_file, "N:$sensor_value");
+        $fields = array(
+            'sensor' => $sensor_value,
+        );
+
+        rrdtool_update($rrd_file, $fields);
 
         // FIXME also warn when crossing WARN level!!
         if ($sensor['sensor_limit_low'] != '' && $sensor['sensor_current'] > $sensor['sensor_limit_low'] && $sensor_value <= $sensor['sensor_limit_low'] && $sensor['sensor_alert'] == 1) {
@@ -253,23 +255,29 @@ function poll_device($device, $options) {
 
         // TODO: These should be easy converts to rrd_create_update()
         // Poller performance rrd
-        $poller_rrd = $config['rrd_dir'].'/'.$device['hostname'].'/poller-perf.rrd';
-        if (!is_file($poller_rrd)) {
-            rrdtool_create($poller_rrd, 'DS:poller:GAUGE:600:0:U '.$config['rrd_rra']);
-        }
+        $poller_rrd = $device['hostname'].'/poller-perf.rrd';
+        rrdtool_create($poller_rrd, 'DS:poller:GAUGE:600:0:U '.$config['rrd_rra']);
 
         if (!empty($device_time)) {
-            rrdtool_update($poller_rrd, "N:$device_time");
+
+            $fields = array(
+                'poller' => $device_time,
+            );
+
+            rrdtool_update($poller_rrd, $fields);
         }
 
         // Ping response rrd
-        $ping_rrd = $config['rrd_dir'].'/'.$device['hostname'].'/ping-perf.rrd';
-        if (!is_file($ping_rrd)) {
-            rrdtool_create($ping_rrd, 'DS:ping:GAUGE:600:0:65535 '.$config['rrd_rra']);
-        }
+        $ping_rrd = $device['hostname'].'/ping-perf.rrd';
+        rrdtool_create($ping_rrd, 'DS:ping:GAUGE:600:0:65535 '.$config['rrd_rra']);
 
         if (!empty($ping_time)) {
-            rrdtool_update($ping_rrd, "N:$ping_time");
+
+            $fields = array(
+                'ping' => $ping_time,
+            );
+
+            rrdtool_update($ping_rrd, $fields);
         }
 
         $update_array['last_polled']           = array('NOW()');
@@ -307,15 +315,16 @@ function poll_mib_def($device, $mib_name_table, $mib_subdir, $mib_oids, $mib_gra
     if (stristr($mib_name_table, 'UBNT')) {
         list($mib,) = explode(':', $mib_name_table, 2);
         // $mib_dirs = mib_dirs($mib_subdir);
-        $rrd_file = strtolower(safename($mib)).'.rrd';
+        $rrd_file = strtolower($mib).'.rrd';
     }
     else {
         list($mib,$file) = explode(':', $mib_name_table, 2);
-        $rrd_file        = strtolower(safename($file)).'.rrd';
+        $rrd_file        = strtolower($file).'.rrd';
     }
 
     $rrdcreate = '--step 300 ';
     $oidglist  = array();
+    $oidnamelist = array();
     foreach ($mib_oids as $oid => $param) {
         $oidindex  = $param[0];
         $oiddsname = $param[1];
@@ -342,6 +351,7 @@ function poll_mib_def($device, $mib_name_table, $mib_subdir, $mib_oids, $mib_gra
 
         // Add to oid GET list
         $oidglist[] = $fulloid;
+        $oidnamelist[] = $oiddsname;
     }//end foreach
 
     // Implde for LibreNMS Version
@@ -354,23 +364,22 @@ function poll_mib_def($device, $mib_name_table, $mib_subdir, $mib_oids, $mib_gra
     }
 
     $rrdupdate = 'N';
+    $oid_count = 0;
     foreach ($oidglist as $fulloid) {
         list($splitoid, $splitindex) = explode('.', $fulloid, 2);
         if (is_numeric($snmpdata[$splitindex][$splitoid])) {
-            $rrdupdate .= ':'.$snmpdata[$splitindex][$splitoid];
+            $fields[$oidnamelist[$oid_count]] = $snmpdata[$splitindex][$splitoid];
         }
         else {
-            $rrdupdate .= ':U';
+            $fields[$oidnamelist[$oid_count]] = ':U';
         }
+        $oid_count++;
     }
 
-    $rrdfilename = $config['rrd_dir'].'/'.$device['hostname'].'/'.$rrd_file;
+    $rrdfilename = $device['hostname'].'/'.$rrd_file;
 
-    if (!is_file($rrdfilename)) {
-        rrdtool_create($rrdfilename, $rrdcreate.' '.$config['rrd_rra']);
-    }
-
-    rrdtool_update($rrdfilename, $rrdupdate);
+    rrdtool_create($rrdfilename, $rrdcreate.' '.$config['rrd_rra']);
+    rrdtool_update($rrdfilename, $fields);
 
     foreach ($mib_graphs as $graphtoenable) {
         $graphs[$graphtoenable] = true;
@@ -395,7 +404,7 @@ function rrd_create_update($device, $name, $def, $val, $step=300) {
     global $config;
     $rrd = rrd_name($device['hostname'], $name);
 
-    if (!is_file($rrd) && $def != null) {
+    if ($def != null) {
         // add the --step and the rra definitions to the array
         $newdef = "--step $step ".implode(' ', $def).$config['rrd_rra'];
         rrdtool_create($rrd, $newdef);

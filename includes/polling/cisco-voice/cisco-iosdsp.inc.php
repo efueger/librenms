@@ -25,14 +25,18 @@ if ($device['os_group'] == "cisco") {
             $active += $value[''];
         }
 
-        $rrd_filename = $config['rrd_dir'] . "/" . $device['hostname'] . "/" . safename ("cisco-iosdsp.rrd");
-        if (!file_exists ($rrd_filename)) {
-            rrdtool_create ($rrd_filename, " DS:total:GAUGE:600:0:U DS:active:GAUGE:600:0:U" . $config['rrd_rra']);
-        }
-        rrdtool_update ($rrd_filename, "N:" . $total . ":" . $active);
+        $rrd_filename = 'cisco-iosdsp.rrd';
+        rrdtool_create ($rrd_filename, " DS:total:GAUGE:600:0:U DS:active:GAUGE:600:0:U" . $config['rrd_rra']);
+
+        $fields = array(
+            'total'  => $total,
+            'active' => $active,
+        );
+
+        rrdtool_update ($rrd_filename, $fields);
 
         $graphs['cisco-iosdsp'] = TRUE;
         echo (" Cisco IOS DSP ");
     }
-    unset($rrd_filename, $total, $active);
+    unset($rrd_filename, $total, $active, $fields);
 }

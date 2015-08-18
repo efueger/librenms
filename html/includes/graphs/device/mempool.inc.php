@@ -34,22 +34,17 @@ foreach (dbFetchRows('SELECT * FROM `mempools` where `device_id` = ?', array($de
     }
 
     $descr        = rrdtool_escape(short_hrDeviceDescr($mempool['mempool_descr']), 22);
-    $rrd_filename = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('mempool-'.$mempool['mempool_type'].'-'.$mempool['mempool_index'].'.rrd');
-
-    if (is_file($rrd_filename)) {
-        $rrd_options .= " DEF:mempoolfree$i=$rrd_filename:free:AVERAGE ";
-        $rrd_options .= " DEF:mempoolused$i=$rrd_filename:used:AVERAGE ";
-        $rrd_options .= " CDEF:mempooltotal$i=mempoolused$i,mempoolused$i,mempoolfree$i,+,/,100,* ";
-
-        $rrd_options .= " AREA:mempooltotal$i#".$colour.'10';
-
-        $rrd_optionsb .= " LINE1:mempooltotal$i#".$colour.":'".$descr."' ";
-        $rrd_optionsb .= " GPRINT:mempooltotal$i:MIN:%3.0lf%%";
-        $rrd_optionsb .= " GPRINT:mempooltotal$i:LAST:%3.0lf%%";
-        $rrd_optionsb .= " GPRINT:mempooltotal$i:MAX:%3.0lf%%\\\l ";
-        $iter++;
-        $i++;
-    }
+    $rrd_filename = 'mempool-'.$mempool['mempool_type'].'-'.$mempool['mempool_index'].'.rrd';
+    $rrd_options .= " DEF:mempoolfree$i=$rrd_filename:free:AVERAGE ";
+    $rrd_options .= " DEF:mempoolused$i=$rrd_filename:used:AVERAGE ";
+    $rrd_options .= " CDEF:mempooltotal$i=mempoolused$i,mempoolused$i,mempoolfree$i,+,/,100,* ";
+    $rrd_options .= " AREA:mempooltotal$i#".$colour.'10';
+    $rrd_optionsb .= " LINE1:mempooltotal$i#".$colour.":'".$descr."' ";
+    $rrd_optionsb .= " GPRINT:mempooltotal$i:MIN:%3.0lf%%";
+    $rrd_optionsb .= " GPRINT:mempooltotal$i:LAST:%3.0lf%%";
+    $rrd_optionsb .= " GPRINT:mempooltotal$i:MAX:%3.0lf%%\\\l ";
+    $iter++;
+    $i++;
 }//end foreach
 
 $rrd_options .= $rrd_optionsb;

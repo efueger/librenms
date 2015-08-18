@@ -49,17 +49,15 @@ if ($device['os_group'] == 'cisco') {
 
                     $cef_entry = dbFetchRow('SELECT * FROM `cef_switching` WHERE `device_id` = ? AND `entPhysicalIndex` = ? AND `afi` = ? AND `cef_index` = ?', array($device['device_id'], $entity, $afi, $path));
 
-                    $filename = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('cefswitching-'.$entity.'-'.$afi.'-'.$path.'.rrd');
+                    $filename = 'cefswitching-'.$entity.'-'.$afi.'-'.$path.'.rrd';
 
-                    if (!is_file($filename)) {
-                        rrdtool_create(
-                            $filename,
-                            '--step 300 \
-                            DS:drop:DERIVE:600:0:1000000 \
-                            DS:punt:DERIVE:600:0:1000000 \
-                            DS:hostpunt:DERIVE:600:0:1000000 '.$config['rrd_rra']
-                        );
-                    }
+                    rrdtool_create(
+                        $filename,
+                        '--step 300 \
+                        DS:drop:DERIVE:600:0:1000000 \
+                        DS:punt:DERIVE:600:0:1000000 \
+                        DS:hostpunt:DERIVE:600:0:1000000 '.$config['rrd_rra']
+                    );
 
                     // Copy HC to non-HC if they exist
                     if (is_numeric($cef_stat['cefSwitchingHCDrop'])) {
@@ -86,7 +84,13 @@ if ($device['os_group'] == 'cisco') {
 
                     dbUpdate($cef_stat['update'], 'cef_switching', '`device_id` = ? AND `entPhysicalIndex` = ? AND `afi` = ? AND `cef_index` = ?', array($device['device_id'], $entity, $afi, $path));
 
-                    $ret = rrdtool_update("$filename", array($cef_stat['cefSwitchingDrop'], $cef_stat['cefSwitchingPunt'], $cef_stat['cefSwitchingPunt2Host']));
+                    $fields = array(
+                        'drop'      => $cef_stat['cefSwitchingDrop'],
+                        'punt'      => $cef_stat['cefSwitchingPunt'],
+                        'hostpunt'  => $cef_stat['cefSwitchingPunt2Host'],
+                    );
+
+                    $ret = rrdtool_update("$filename", $fields);
 
                     echo "\n";
                 }//end foreach

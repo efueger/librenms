@@ -31,20 +31,22 @@ $serial = snmp_get($device, '.1.3.6.1.4.1.11.2.36.1.1.2.9.0', '-Oqv', 'SEMI-MIB'
 $serial = trim(str_replace('"', '', $serial));
 
 // FIXME maybe genericise? or do away with it if we ever walk the full dot1qTpFdbTable as we can count ourselves then ;)
-$fdb_rrd_file = $config['rrd_dir'].'/'.$device['hostname'].'/fdb_count.rrd';
+$fdb_rrd_file = '/fdb_count.rrd';
 
 $FdbAddressCount = snmp_get($device, 'hpSwitchFdbAddressCount.0', '-Ovqn', 'STATISTICS-MIB');
 
 if (is_numeric($FdbAddressCount)) {
-    if (!is_file($fdb_rrd_file)) {
-        rrdtool_create(
-            $fdb_rrd_file,
-            ' --step 300 \
-                    DS:value:GAUGE:600:-1:100000 '.$config['rrd_rra']
-        );
-    }
+    rrdtool_create(
+        $fdb_rrd_file,
+        ' --step 300 \
+        DS:value:GAUGE:600:-1:100000 '.$config['rrd_rra']
+    );
 
-    rrdtool_update($fdb_rrd_file, "N:$FdbAddressCount");
+    $fields = array(
+        'value' => $FdbAddressCount,
+    );
+
+    rrdtool_update($fdb_rrd_file, $fields);
 
     $graphs['fdb_count'] = true;
 

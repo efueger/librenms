@@ -24,23 +24,32 @@ foreach ($servers as $item => $server) {
         $peak              = $data['6'];
         $max               = $data['7'];
         $unique            = $data['8'];
-        $rrdfile           = $config['rrd_dir'].'/'.$device['hostname'].'/app-shoutcast-'.$app['app_id'].'-'.$host.'_'.$port.'.rrd';
+        $rrdfile           = '/app-shoutcast-'.$app['app_id'].'-'.$host.'_'.$port.'.rrd';
 
-        if (!is_file($rrdfile)) {
-            rrdtool_create(
-                $rrdfile,
-                '--step 300 \
-                DS:bitrate:GAUGE:600:0:125000000000 \
-                DS:traf_in:GAUGE:600:0:125000000000 \
-                DS:traf_out:GAUGE:600:0:125000000000 \
-                DS:current:GAUGE:600:0:125000000000 \
-                DS:status:GAUGE:600:0:125000000000 \
-                DS:peak:GAUGE:600:0:125000000000 \
-                DS:max:GAUGE:600:0:125000000000 \
-                DS:unique:GAUGE:600:0:125000000000 '.$config['rrd_rra']
-            );
-        }
+        rrdtool_create(
+            $rrdfile,
+            '--step 300 \
+            DS:bitrate:GAUGE:600:0:125000000000 \
+            DS:traf_in:GAUGE:600:0:125000000000 \
+            DS:traf_out:GAUGE:600:0:125000000000 \
+            DS:current:GAUGE:600:0:125000000000 \
+            DS:status:GAUGE:600:0:125000000000 \
+            DS:peak:GAUGE:600:0:125000000000 \
+            DS:max:GAUGE:600:0:125000000000 \
+            DS:unique:GAUGE:600:0:125000000000 '.$config['rrd_rra']
+        );
 
-        rrdtool_update($rrdfile, "N:$bitrate:$traf_in:$traf_out:$current:$status:$peak:$max:$unique");
+        $fields = array(
+                        'bitrate'    => $bitrate,
+                        'traf_in'    => $traf_in,
+                        'traf_out'   => $traf_out,
+                        'current'    => $current,
+                        'status'     => $status,
+                        'peak'       => $peak,
+                        'max'        => $max,
+                        'unique'     => $unique,
+        );
+
+        rrdtool_update($rrdfile, $fields);
     }//end if
 }//end foreach

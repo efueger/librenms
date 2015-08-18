@@ -44,22 +44,28 @@ if ($port_stats[$port['ifIndex']]
     // Check to make sure Port data is cached.
     $this_port = &$port_stats[$port['ifIndex']];
 
-    $rrdfile = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('port-'.$port['ifIndex'].'-poe.rrd');
+    $rrdfile = 'port-'.$port['ifIndex'].'-poe.rrd';
 
-    if (!file_exists($rrdfile)) {
-        $rrd_create .= $config['rrd_rra'];
+    $rrd_create .= $config['rrd_rra'];
 
-        // FIXME CISCOSPECIFIC
-        $rrd_create .= ' DS:PortPwrAllocated:GAUGE:600:0:U';
-        $rrd_create .= ' DS:PortPwrAvailable:GAUGE:600:0:U';
-        $rrd_create .= ' DS:PortConsumption:DERIVE:600:0:U';
-        $rrd_create .= ' DS:PortMaxPwrDrawn:GAUGE:600:0:U ';
+    // FIXME CISCOSPECIFIC
+    $rrd_create .= ' DS:PortPwrAllocated:GAUGE:600:0:U';
+    $rrd_create .= ' DS:PortPwrAvailable:GAUGE:600:0:U';
+    $rrd_create .= ' DS:PortConsumption:DERIVE:600:0:U';
+    $rrd_create .= ' DS:PortMaxPwrDrawn:GAUGE:600:0:U ';
 
-        rrdtool_create($rrdfile, $rrd_create);
-    }
+    rrdtool_create($rrdfile, $rrd_create);
 
     $upd = "$polled:".$port['cpeExtPsePortPwrAllocated'].':'.$port['cpeExtPsePortPwrAvailable'].':'.$port['cpeExtPsePortPwrConsumption'].':'.$port['cpeExtPsePortMaxPwrDrawn'];
-    $ret = rrdtool_update("$rrdfile", $upd);
+
+    $fields = array(
+        'PortPwrAllocated'   => $port['cpeExtPsePortPwrAllocated'],
+        'PortPwrAvailable'   => $port['cpeExtPsePortPwrAvailable'],
+        'PortConsumption'    => $port['cpeExtPsePortPwrConsumption'],
+        'PortMaxPwrDrawn'    => $port['cpeExtPsePortMaxPwrDrawn'],
+    );
+
+    $ret = rrdtool_update("$rrdfile", $fields);
 
     echo 'PoE ';
 }//end if

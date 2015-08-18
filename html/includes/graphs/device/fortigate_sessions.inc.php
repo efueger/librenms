@@ -1,6 +1,6 @@
 <?php
 
-$rrd_filename = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('fortigate_sessions.rrd');
+$rrd_filename = 'fortigate_sessions.rrd';
 
 require 'includes/graphs/common.inc.php';
 

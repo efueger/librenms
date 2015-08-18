@@ -11,14 +11,18 @@ if ($device['os_group'] == 'cisco') {
     $data = snmpwalk_cache_oid($device, 'cvpdnSystemEntry', null, 'CISCO-VPDN-MGMT-MIB');
 
     foreach ($data as $type => $vpdn) {
-        $rrd_filename = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('vpdn-'.$type.'.rrd');
+        $rrd_filename = 'vpdn-'.$type.'.rrd';
 
-        if (is_file($rrd_filename) || $vpdn['cvpdnSystemTunnelTotal'] || $vpdn['cvpdnSystemSessionTotal']) {
-            if (!file_exists($rrd_filename)) {
-                rrdtool_create($rrd_filename, ' DS:tunnels:GAUGE:600:0:U DS:sessions:GAUGE:600:0:U DS:denied:COUNTER:600:0:100000'.$config['rrd_rra']);
-            }
+        if ($vpdn['cvpdnSystemTunnelTotal'] || $vpdn['cvpdnSystemSessionTotal']) {
+            rrdtool_create($rrd_filename, ' DS:tunnels:GAUGE:600:0:U DS:sessions:GAUGE:600:0:U DS:denied:COUNTER:600:0:100000'.$config['rrd_rra']);
 
-            rrdtool_update($rrd_filename, array($vpdn['cvpdnSystemTunnelTotal'], $vpdn['cvpdnSystemSessionTotal'], $vpdn['cvpdnSystemDeniedUsersTotal']));
+            $fields = array(
+                'tunnels'   => $vpdn['cvpdnSystemTunnelTotal'],
+                'sessions'  => $vpdn['cvpdnSystemSessionTotal'],
+                'denied'    => $vpdn['cvpdnSystemDeniedUsersTotal'],
+            );
+
+            rrdtool_update($rrd_filename, $fields);
 
             $graphs['vpdn_sessions_'.$type] = true;
             $graphs['vpdn_tunnels_'.$type]  = true;

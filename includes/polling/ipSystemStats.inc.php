@@ -96,10 +96,10 @@ if ($ipSystemStats) {
 
         unset($snmpstring, $rrdupdate, $snmpdata, $snmpdata_cmd, $rrd_create);
 
-        $rrdfile = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('ipSystemStats-'.$af.'.rrd');
+        $rrdfile = 'ipSystemStats-'.$af.'.rrd';
 
         $rrd_create = $config['rrd_rra'];
-        $rrdupdate  = 'N';
+        $fields  = array();
 
         foreach ($oids as $oid) {
             $oid_ds          = str_replace('ipSystemStats', '', $oid);
@@ -109,16 +109,13 @@ if ($ipSystemStats) {
                 $stats[$oid] = '0';
             }
 
-            $rrdupdate .= ':'.$stats[$oid];
+            $fields[$oid] = $stats[$oid];
         }
 
-        if (!file_exists($rrdfile)) {
-            rrdtool_create($rrdfile, $rrd_create);
-        }
+        rrdtool_create($rrdfile, $rrd_create);
+        rrdtool_update($rrdfile, $fields);
 
-        rrdtool_update($rrdfile, $rrdupdate);
-
-        unset($rrdupdate, $rrd_create);
+        unset($fields, $rrd_create);
 
         // FIXME per-AF?
         $graphs['ipsystemstats_'.$af]         = true;

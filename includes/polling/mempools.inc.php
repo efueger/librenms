@@ -3,7 +3,7 @@
 foreach (dbFetchRows('SELECT * FROM mempools WHERE device_id = ?', array($device['device_id'])) as $mempool) {
     echo 'Mempool '.$mempool['mempool_descr'].': ';
 
-    $mempool_rrd = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('mempool-'.$mempool['mempool_type'].'-'.$mempool['mempool_index'].'.rrd');
+    $mempool_rrd = 'mempool-'.$mempool['mempool_type'].'-'.$mempool['mempool_index'].'.rrd';
 
     $file = $config['install_dir'].'/includes/polling/mempools/'.$mempool['mempool_type'].'.inc.php';
     if (is_file($file)) {
@@ -22,11 +22,14 @@ foreach (dbFetchRows('SELECT * FROM mempools WHERE device_id = ?', array($device
 
     echo $percent.'% ';
 
-    if (!is_file($mempool_rrd)) {
-        rrdtool_create($mempool_rrd, '--step 300 DS:used:GAUGE:600:0:U DS:free:GAUGE:600:0:U '.$config['rrd_rra']);
-    }
+    rrdtool_create($mempool_rrd, '--step 300 DS:used:GAUGE:600:0:U DS:free:GAUGE:600:0:U '.$config['rrd_rra']);
 
-    rrdtool_update($mempool_rrd, 'N:'.$mempool['used'].':'.$mempool['free']);
+    $fields = array(
+        'used' => $mempool['used'],
+        'free' => $mempool['free'],
+    );
+
+    rrdtool_update($mempool_rrd, $fields);
 
     $mempool['state'] = array(
                          'mempool_used'  => $mempool['used'],

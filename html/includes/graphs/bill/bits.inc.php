@@ -4,11 +4,9 @@
 $i = 0;
 
 foreach ($ports as $port) {
-    if (is_file($config['rrd_dir'].'/'.$port['hostname'].'/port-'.safename($port['ifIndex'].'.rrd'))) {
-        $rrd_list[$i]['filename'] = $config['rrd_dir'].'/'.$port['hostname'].'/port-'.safename($port['ifIndex'].'.rrd');
-        $rrd_list[$i]['descr']    = $port['ifDescr'];
-        $i++;
-    }
+    $rrd_list[$i]['filename'] = 'port-'.$port['ifIndex'].'.rrd';
+    $rrd_list[$i]['descr']    = $port['ifDescr'];
+    $i++;
 }
 
 $units       = 'bps';

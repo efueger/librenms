@@ -35,12 +35,14 @@ if ($device['os_group'] == 'unix') {
 
     if (!empty($agent_raw)) {
         echo 'execution time: '.$agent_time.'ms';
-        $agent_rrd = $config['rrd_dir'].'/'.$device['hostname'].'/agent.rrd';
-        if (!is_file($agent_rrd)) {
-            rrdtool_create($agent_rrd, 'DS:time:GAUGE:600:0:U '.$config['rrd_rra']);
-        }
+        $agent_rrd = 'agent.rrd';
+        rrdtool_create($agent_rrd, 'DS:time:GAUGE:600:0:U '.$config['rrd_rra']);
 
-        rrdtool_update($agent_rrd, 'N:'.$agent_time);
+        $fields = array(
+            'time' => $agent_time,
+        );
+
+        rrdtool_update($agent_rrd, $fields);
         $graphs['agent'] = true;
 
         foreach (explode('<<<', $agent_raw) as $section) {

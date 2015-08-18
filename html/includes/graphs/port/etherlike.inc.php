@@ -18,17 +18,15 @@ $oids = array(
         );
 
 $i            = 0;
-$rrd_filename = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('port-'.$port['ifIndex'].'-dot3.rrd');
+$rrd_filename = 'port-'.$port['ifIndex'].'-dot3.rrd';
 
-if (is_file($rrd_filename)) {
-    foreach ($oids as $oid) {
-        $oid        = str_replace('dot3Stats', '', $oid);
-        $oid_ds = truncate($oid, 19, '');
-        $rrd_list[$i]['filename'] = $rrd_filename;
-        $rrd_list[$i]['descr']    = $oid;
-        $rrd_list[$i]['ds']       = $oid_ds;
-        $i++;
-    }
+foreach ($oids as $oid) {
+    $oid        = str_replace('dot3Stats', '', $oid);
+    $oid_ds = truncate($oid, 19, '');
+    $rrd_list[$i]['filename'] = $rrd_filename;
+    $rrd_list[$i]['descr']    = $oid;
+    $rrd_list[$i]['ds']       = $oid_ds;
+    $i++;
 }
 
 $colours    = 'mixed';

@@ -29,17 +29,7 @@ if ($device['os_group'] == 'cisco' || $device['os'] == 'acsw') {
                 $descr = "Processor $index";
             }
 
-            $old_rrd = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('cpmCPU-'.$index.'.rrd');
-            $new_rrd = $config['rrd_dir'].'/'.$device['hostname'].'/'.safename('processor-cpm-'.$index.'.rrd');
-
-            if (is_file($old_rrd)) {
-                rename($old_rrd, $new_rrd);
-                if ($debug) {
-                    echo "$old_rrd $new_rrd";
-                }
-
-                echo 'Moved RRD ';
-            }
+            $new_rrd = 'processor-cpm-'.$index.'.rrd';
 
             if (!strstr($descr, 'No') && !strstr($usage, 'No') && $descr != '') {
                 discover_processor($valid['processor'], $device, $usage_oid, $index, 'cpm', $descr, '1', $usage, $entPhysicalIndex, null);

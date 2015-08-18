@@ -85,9 +85,6 @@ if (is_array($hrstorage_array)) {
             discover_storage($valid_storage, $device, $index, $fstype, 'hrstorage', $descr, $size, $units, $used);
         }
 
-        // $old_storage_rrd  = $config['rrd_dir'] . "/" . $device['hostname'] . "/" . safename("hrStorage-" . $index . ".rrd");
-        // $storage_rrd  = $config['rrd_dir'] . "/" . $device['hostname'] . "/" . safename("storage-hrstorage-" . $index . ".rrd");
-        // if (is_file($old_storage_rrd)) { rename($old_storage_rrd,$storage_rrd); }
         unset($deny, $fstype, $descr, $size, $used, $units, $storage_rrd, $old_storage_rrd, $hrstorage_array);
     }//end foreach
 }//end if
