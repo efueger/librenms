@@ -502,6 +502,7 @@ $config['irc_host']     = '';
 $config['irc_port']     = '';
 $config['irc_maxretry'] = 3;
 $config['irc_nick']     = $config['project_name'];
+$config['irc_chan']     = array();
 $config['irc_chan'][]   = '##'.$config['project_id'];
 $config['irc_pass']     = '';
 $config['irc_external'] = '';

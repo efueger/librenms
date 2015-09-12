@@ -4,6 +4,8 @@
 // 1 UNKNOWN
 include 'config.php';
 
+echo 'LibreNMS Base-Installer'.PHP_EOL;
+
 if (!isset($sql_file)) {
     $sql_file = 'build.sql';
 }
