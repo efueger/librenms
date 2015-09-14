@@ -58,9 +58,9 @@ if (!isset($debug)) {
 
 /**
  * Apply collection of patches.
- * @param mixed &$item Collection
- * @param mixed $key Component
- * @return void
+ * @param mixed &$patches Collection
+ * @param mixed $component Component
+ * @return null|-1
  */
 function apply_patches(&$patches,$component) {
     global $config, $limit;
@@ -71,7 +71,6 @@ function apply_patches(&$patches,$component) {
     }
     foreach ($patches as $k=>$patch) {
         $file = $config['install_dir'].'/sql-schema/'.$component.'/'.$patch.'.sql';
-        $i = 1;
         if (file_exists($file)) {
             echo '    '.($patch-1).' => '.((int) $patch);
             foreach (file($file) as $line) {
@@ -116,7 +115,7 @@ function apply_patches(&$patches,$component) {
 
 /**
  * Apply line
- * @param string $sql Patch-Line
+ * @param string $line Patch-Line
  * @return bool
  */
 function apply_line($line) {
