@@ -72,7 +72,7 @@ function apply_patches(&$patches,$component) {
     foreach ($patches as $k=>$patch) {
         $file = $config['install_dir'].'/sql-schema/'.$component.'/'.$patch.'.sql';
         if (file_exists($file)) {
-            echo '    '.($patch-1).' => '.((int) $patch);
+            echo '    '.($patch-1).' => '.((int) $patch).' ';
             foreach (file($file) as $line) {
                 $line = trim($line);
                 if (!empty($line) && $line[0] != "#") {
@@ -137,7 +137,7 @@ function apply_line($line) {
 
 if (!dbFetchCell('select 1 from COLUMNS where TABLE_SCHEMA = ? && TABLE_NAME = ? && COLUMN_NAME = ?',array($config['db_name'],'dbSchema','component'))) {
     dbQuery('alter table dbSchema add column `component` varchar(255) not null default ""');
-    dbUpdate(array('component'=>'core'),'dbSchema','component=""');
+    dbUpdate(array('component'=>'org.librenms.core'),'dbSchema','component=""');
 }
 
 $apply   = array();
