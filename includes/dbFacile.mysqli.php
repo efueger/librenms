@@ -240,7 +240,14 @@ function dbDelete($table, $where=null, $parameters=array()) {
 
 
 function dbFetchRows($sql, $parameters=array()) {
-    global $db_stats;
+    global $db_stats, $config;
+
+    if ($config['memcached']['enable']) {
+        $result = $config['memcached']['resource']->get(hash('sha512',$sql.'|'.serialize($parameters)));
+        if (!empty($result)) {
+            return $result;
+        }
+    }
 
     $time_start = microtime(true);
     $result         = dbQuery($sql, $parameters);
@@ -252,6 +259,9 @@ function dbFetchRows($sql, $parameters=array()) {
         }
 
         mysqli_free_result($result);
+        if ($config['memcached']['enable']) {
+            $config['memcached']['resource']->set(hash('sha512',$sql.'|'.serialize($parameters)),$rows,$config['memcached']['ttl']);
+        }
         return $rows;
     }
 
@@ -297,7 +307,14 @@ function dbFetch($sql, $parameters=array()) {
 
 
 function dbFetchRow($sql=null, $parameters=array()) {
-    global $db_stats;
+    global $db_stats, $config;
+
+    if ($config['memcached']['enable']) {
+        $result = $config['memcached']['resource']->get(hash('sha512',$sql.'|'.serialize($parameters)));
+        if (!empty($result)) {
+            return $result;
+        }
+    }
 
     $time_start = microtime(true);
     $result         = dbQuery($sql, $parameters);
@@ -309,6 +326,9 @@ function dbFetchRow($sql=null, $parameters=array()) {
         $db_stats['fetchrow_sec'] += number_format(($time_end - $time_start), 8);
         $db_stats['fetchrow']++;
 
+        if ($config['memcached']['enable']) {
+            $config['memcached']['resource']->set(hash('sha512',$sql.'|'.serialize($parameters)),$rows,$config['memcached']['ttl']);
+        }
         return $row;
     }
     else {
@@ -326,7 +346,8 @@ function dbFetchRow($sql=null, $parameters=array()) {
 
 
 function dbFetchCell($sql, $parameters=array()) {
-    global $db_stats;
+    global $db_stats, $config;
+
     $time_start = microtime(true);
     $row            = dbFetchRow($sql, $parameters);
     if ($row) {
