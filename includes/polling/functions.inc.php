@@ -96,7 +96,7 @@ function poll_sensor($device, $class, $unit) {
         if (!is_file($rrd_file)) {
             rrdtool_create(
                 $rrd_file,
-                '--step 300 \
+                '--step 300 
                 DS:sensor:GAUGE:600:-20000:20000 '.$config['rrd_rra']
             );
         }
@@ -158,7 +158,9 @@ function poll_device($device, $options) {
         echo "Created directory : $host_rrd\n";
     }
 
-    $ping_response = isPingable($device['hostname'], $device['device_id']);
+    $address_family = snmpTransportToAddressFamily($device['transport']);
+
+    $ping_response = isPingable($device['hostname'], $address_family, $device['device_id']);
 
     $device_perf              = $ping_response['db'];
     $device_perf['device_id'] = $device['device_id'];
