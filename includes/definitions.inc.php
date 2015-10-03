@@ -4,30 +4,32 @@
 require_once $config['install_dir'].'/includes/dbFacile.php';
 require_once $config['install_dir'].'/includes/mergecnf.inc.php';
 
-// Connect to database
-if ($config['db']['extension'] == 'mysqli') {
-    $database_link = mysqli_connect('p:'.$config['db_host'], $config['db_user'], $config['db_pass']);
-}
-else {
-    $database_link = mysql_pconnect($config['db_host'], $config['db_user'], $config['db_pass']);
-}
-
-if (!$database_link) {
-    echo '<h2>MySQL Error</h2>';
+if( !defined('IS_DAEMON') ) {
+    // Connect to database
     if ($config['db']['extension'] == 'mysqli') {
-        echo mysqli_error($database_link);
+        $database_link = mysqli_connect('p:'.$config['db_host'], $config['db_user'], $config['db_pass']);
     }
     else {
-        echo mysql_error();
+        $database_link = mysql_pconnect($config['db_host'], $config['db_user'], $config['db_pass']);
     }
-die;
-}
 
-if ($config['db']['extension'] == 'mysqli') {
-    $database_db = mysqli_select_db($database_link, $config['db_name']);
-}
-else {
-    $database_db = mysql_select_db($config['db_name'], $database_link);
+    if (!$database_link) {
+        echo '<h2>MySQL Error</h2>';
+        if ($config['db']['extension'] == 'mysqli') {
+            echo mysqli_error($database_link);
+        }
+        else {
+            echo mysql_error();
+        }
+        die;
+    }
+
+    if ($config['db']['extension'] == 'mysqli') {
+        $database_db = mysqli_select_db($database_link, $config['db_name']);
+    }
+    else {
+        $database_db = mysql_select_db($config['db_name'], $database_link);
+    }
 }
 
 if ($config['memcached']['enable'] === true) {
@@ -1785,7 +1787,7 @@ $config['ipmi_unit']['Watts']     = 'power';
 $config['ipmi_unit']['discrete']  = '';
 
 // INCLUDE THE VMWARE DEFINITION FILE.
-require_once 'vmware_guestid.inc.php';
+require_once($config['install_dir']."/includes/vmware_guestid.inc.php");
 
 // Define some variables if they aren't set by user definition in config.php
 if (!isset($config['html_dir'])) {
@@ -1810,4 +1812,27 @@ if (!isset($config['plugin_dir'])) {
 
 if (!isset($config['title_image'])) {
     $config['title_image'] = 'images/librenms_logo_'.$config['site_style'].'.png';
+}
+
+//Add additional jobs to the daemon depending on the user's config
+if( $config['distributed_poller'] == false ) {
+	if( $config['show_services'] ) {
+		$config['daemon']['intervals'][60][5][]    = array('type'=>'exec',    'file'=>'check-services.php');
+	}
+	if( $config['enable_billing'] ) {
+		$config['daemon']['intervals'][60][5][]    = array('type'=>'exec',    'file'=>'poll-billing.php');
+		$config['daemon']['intervals'][60][1440][] = array('type'=>'exec',    'file'=>'billing-calculate.php');
+	}
+	$config['daemon']['intervals'][60][1][]      = array('type'=>'include', 'file'=>'alerts.php');
+} else {
+	if( $config['daemon']['run']['services'] ) {
+		$config['daemon']['intervals'][60][5][]    = array('type'=>'exec',    'file'=>'check-services.php');
+	}
+	if( $config['daemon']['run']['billing'] ) {
+		$config['daemon']['intervals'][60][5][]    = array('type'=>'exec',    'file'=>'poll-billing.php');
+		$config['daemon']['intervals'][60][1440][] = array('type'=>'exec',    'file'=>'billing-calculate.php');
+	}
+	if( $config['daemon']['run']['alerts'] ) {
+		$config['daemon']['intervals'][60][1][]    = array('type'=>'include', 'file'=>'alerts.php');
+	}
 }

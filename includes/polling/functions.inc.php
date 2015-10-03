@@ -124,9 +124,12 @@ function poll_sensor($device, $class, $unit) {
 
 }//end poll_sensor()
 
-
-function poll_device($device, $options) {
+function poll_device($device_arg, $options) {
     global $config, $device, $polled_devices, $db_stats, $memcache;
+
+    if( $device !== $device_arg ) {
+      $device = $device_arg;
+    }
 
     $attribs = get_dev_attribs($device['device_id']);
 
