@@ -22,18 +22,18 @@
 // Please don't edit this file -- make changes to the configuration array in config.php
 //
 error_reporting(E_ERROR);
+if( !defined('IS_DAEMON') ) {
+    function set_debug($debug) {
 
-function set_debug($debug) {
-
-    if (isset($debug)) {
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 0);
-        ini_set('log_errors', 0);
-        ini_set('allow_url_fopen', 0);
-        ini_set('error_reporting', E_ALL);
-    }
-
-}//end set_debug()
+        if (isset($debug)) {
+            ini_set('display_errors', 1);
+            ini_set('display_startup_errors', 0);
+            ini_set('log_errors', 0);
+            ini_set('allow_url_fopen', 0);
+            ini_set('error_reporting', E_ALL);
+        }
+    }//end set_debug()
+}
 
 // Default directories
 $config['project_name'] = 'LibreNMS';
@@ -788,3 +788,25 @@ $config['summary_errors']                               = 0;
 
 // Default width of the availability map's tiles
 $config['availability-map-width']                       = 25;
+
+// Unix-agent poller module config settings
+$config['unix-agent-connection-time-out'] 		= 10; //seconds
+$config['unix-agent-read-time-out'] 			= 10; //seconds
+
+// Daemon Config
+$config['daemon']['facility'] = LOG_DAEMON;                      // Log-facility.
+$config['daemon']['debug']    = false;                           // Debug, General Enable/Disable (true/false) or Enable specific sections by names (clock,jobctl,..).
+$config['daemon']['uid']      = posix_getpwnam('librenms');      // Temp Assignment
+$config['daemon']['gid']      = $config['daemon']['uid']['gid']; // GID to use for daemon.
+$config['daemon']['uid']      = $config['daemon']['uid']['uid']; // UID to use for daemon.
+
+// Daemon Run-Makros for Distributed Poller Setup.
+$config['daemon']['run']['services'] = false;
+$config['daemon']['run']['billing']  = false;
+$config['daemon']['run']['alerts']   = false;
+
+// Daemon Intervals
+$config['daemon']['intervals'][60][5][]    = array('type'=>'internal', 'func'=>'poller',    'args'=>array('threads'=>'16'));            // Poller runs every 5 minutes
+$config['daemon']['intervals'][60][2][]    = array('type'=>'internal', 'func'=>'discovery', 'args'=>array('threads'=>'16','new'=>'1')); // Discover new devices every 2 minutes
+$config['daemon']['intervals'][3600][6][]  = array('type'=>'internal', 'func'=>'discovery', 'args'=>array('threads'=>'16'));            // Re-Discover every 6 Hours
+$config['daemon']['intervals'][86400][1][] = array('type'=>'exec',     'file'=>'daily.sh');                                             // Daily at midnight.

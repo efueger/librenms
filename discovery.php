@@ -11,19 +11,22 @@
  * @author     Adam Armstrong <adama@memetic.org>
  * @copyright  (C) 2006 - 2012 Adam Armstrong
  */
-
-chdir(dirname($argv[0]));
-
-require 'includes/defaults.inc.php';
-require 'config.php';
-require 'includes/definitions.inc.php';
-require 'includes/functions.php';
-require 'includes/discovery/functions.inc.php';
+if( !defined('IS_DAEMON') ) {
+	chdir(dirname($argv[0]));
+	require_once 'includes/defaults.inc.php';
+	require_once 'config.php';
+	require_once 'includes/definitions.inc.php';
+	require_once 'includes/functions.php';
+	require_once 'includes/discovery/functions.inc.php';
+}
 
 $start         = utime();
 $runtime_stats = array();
 $sqlparams     = array();
-$options       = getopt('h:m:i:n:d::a::q',array('os:','type:'));
+
+if( !isset($options) ) {
+	$options = getopt("h:m:i:n:d::a::q");
+}
 
 if (!isset($options['q'])) {
     echo $config['project_name_version']." Discovery\n";

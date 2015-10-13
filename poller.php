@@ -11,21 +11,23 @@
  * @author     Adam Armstrong <adama@memetic.org>
  * @copyright  (C) 2006 - 2012 Adam Armstrong
  */
+if( !defined('IS_DAEMON') ) {
+	chdir(dirname($argv[0]));
 
-chdir(dirname($argv[0]));
-
-require 'includes/defaults.inc.php';
-require 'config.php';
-require 'includes/definitions.inc.php';
-require 'includes/functions.php';
-require 'includes/polling/functions.inc.php';
-require 'includes/alerts.inc.php';
-
+	require_once "includes/defaults.inc.php";
+	require_once "config.php";
+	require_once "includes/definitions.inc.php";
+	require_once "includes/functions.php";
+	require_once "includes/polling/functions.inc.php";
+	require_once "includes/alerts.inc.php";
+}
 $poller_start = utime();
 echo $config['project_name_version']." Poller\n";
 echo get_last_commit()."\n";
 
-$options = getopt('h:m:i:n:r::d::a::');
+if( !isset($options) ) {
+        $options = getopt("h:m:i:n:d::a::q");
+}
 
 if ($options['h'] == 'odd') {
     $options['n'] = '1';

@@ -30,7 +30,7 @@ push-personal pp:
 push-testing pt:
 	$(GIT) push testing
 
-update-subtrees: datetime-subtree moment-subtree font-awesome vis
+update-subtrees: datetime-subtree moment-subtree font-awesome vis typeahead fastcgi-client
 
 datetime-subtree:
 	$(GIT_SUBTREE) --prefix=html/js/datetime https://github.com/Eonasdan/bootstrap-datetimepicker master
@@ -64,3 +64,6 @@ Leaflet.markercluster:
 
 Leaflet.awesome-markers:
 	$(GIT_SUBTREE) --prefix=lib/Leaflet.awesome-markers https://github.com/lvoogdt/Leaflet.awesome-markers.git 2.0/develop
+
+fastcgi-client:
+	$(GIT_SUBTREE) --prefix=lib/fastcgi-client https://github.com/adoy/PHP-FastCGI-Client.git master
