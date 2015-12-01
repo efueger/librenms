@@ -165,6 +165,7 @@ else {
   <script src="js/pace.min.js"></script>
   <script src="js/jquery.lazyload.min.js"></script>
   <script src="js/lazyload.js"></script>
+  <script src="js/librenms.js"></script>
   <script type="text/javascript">
 
     <!-- Begin
@@ -182,6 +183,10 @@ else {
 <body>
 
 <?php
+
+if(empty($_SESSION['screen_width']) && empty($_SESSION['screen_height'])) {
+    echo "<script>updateResolution();</script>";
+}
 
 if ((isset($vars['bare']) && $vars['bare'] != "yes") || !isset($vars['bare'])) {
     if ($_SESSION['authenticated']) {

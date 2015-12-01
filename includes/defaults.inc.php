@@ -195,6 +195,8 @@ $config['snmp']['v3'][0]['cryptopass'] = '';
 $config['snmp']['v3'][0]['cryptoalgo'] = 'AES';
 // AES | DES
 
+// Devices must respond to icmp by default
+$config['icmp_check'] = true;
 
 // Autodiscovery Settings
 $config['autodiscovery']['xdp'] = true;
@@ -213,6 +215,8 @@ $config['autodiscovery']['nets-exclude'][] = '127.0.0.0/8';
 $config['autodiscovery']['nets-exclude'][] = '169.254.0.0/16';
 $config['autodiscovery']['nets-exclude'][] = '224.0.0.0/4';
 $config['autodiscovery']['nets-exclude'][] = '240.0.0.0/4';
+// Autodiscover by IP
+$config['discovery_by_ip'] = false;// Set to true if you want to enable auto discovery by IP.
 
 $config['alerts']['email']['enable'] = false;
 // Enable email alerts
@@ -342,7 +346,7 @@ $config['network_map_vis_options'] = '{
         enabled: false
     },
     font: {
-        size: 12,
+        size: 14,
         color: "red",
         face: "sans",
         background: "white",
@@ -352,23 +356,59 @@ $config['network_map_vis_options'] = '{
     }
   },
   "physics": {
-    "forceAtlas2Based": {
-      "gravitationalConstant": -800,
-      "centralGravity": 0.03,
-      "springLength": 50,
-      "springConstant": 0,
-      "damping": 1,
+     "barnesHut": {
+      "gravitationalConstant": -2000,
+      "centralGravity": 0.3,
+      "springLength": 200,
+      "springConstant": 0.04,
+      "damping": 0.09,
       "avoidOverlap": 1
     },
-    "maxVelocity": 50,
-    "minVelocity": 0.01,
-    "solver": "forceAtlas2Based",
-    "timestep": 0.30
-  }
+
+     "forceAtlas2Based": {
+      "gravitationalConstant": -50,
+      "centralGravity": 0.01,
+      "springLength": 200,
+      "springConstant": 0.08,
+      "damping": 0.4,
+      "avoidOverlap": 1
+    },
+    
+     "repulsion": {
+      "centralGravity": 0.2,
+      "springLength": 250,
+      "springConstant": 0.2,
+      "nodeDistance": 200,
+      "damping": 0.07
+    },
+
+     "hierarchicalRepulsion": {
+      "nodeDistance": 300,
+      "centralGravity": 0.2,
+      "springLength": 300,
+      "springConstant": 0.2,
+      "damping": 0.07
+    },
+    
+  "maxVelocity": 50,
+  "minVelocity": 0.4,
+  "solver": "hierarchicalRepulsion",
+  "stabilization": {
+    "enabled": true,
+    "iterations": 1000,
+    "updateInterval": 100,
+    "onlyDynamicEdges": false,
+    "fit": true
+  },
+
+  "timestep": 0.4,
+ }
 }';
 
 // Device page options
 $config['show_overview_tab'] = true;
+
+$config['cpu_details_overview'] = false; //By default show only average cpu in device overview
 
 // The device overview page options
 $config['overview_show_sysDescr'] = true;
@@ -493,7 +533,6 @@ $config['device_traffic_iftype'][] = '/ppp/';
 $config['device_traffic_descr'][] = '/loopback/';
 $config['device_traffic_descr'][] = '/vlan/';
 $config['device_traffic_descr'][] = '/tunnel/';
-$config['device_traffic_descr'][] = '/:\d+/';
 $config['device_traffic_descr'][] = '/bond/';
 $config['device_traffic_descr'][] = '/null/';
 $config['device_traffic_descr'][] = '/dummy/';
@@ -788,3 +827,6 @@ $config['summary_errors']                               = 0;
 
 // Default width of the availability map's tiles
 $config['availability-map-width']                       = 25;
+
+// Default notifications Feed
+$config['notifications']['LibreNMS']                    = 'http://www.librenms.org/notifications.rss';

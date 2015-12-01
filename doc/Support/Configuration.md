@@ -59,6 +59,17 @@ $config['fping_options']['millisec'] = 200;
 * `count` (`fping` parameter `-c`): Number of request packets to send to each target.
 * `millisec` (`fping` parameter `-p`): Time in milliseconds that fping waits between successive packets to an individual target.
 
+You can disable the fping / icmp check that is done for a device to be determined to be up on a global or per device basis.
+**We don't advice disabling the fping / icmp check unless you know the impact, at worst if you have a large number of devices down 
+then it's possible that the poller would no longer complete in 5 minutes due to waiting for snmp to timeout.**
+
+Globally disable fping / icmp check:
+```php
+$config['icmp_check'] = false;
+```
+
+If you would like to do this on a per device basis then you can do so under Device -> Edit -> Misc -> Disable ICMP Test? On
+
 ```php
 $config['snmpwalk']         = "/usr/bin/snmpwalk";
 $config['snmpget']          = "/usr/bin/snmpget";
@@ -250,6 +261,12 @@ $config['autodiscovery']['nets-exclude'][] = "240.0.0.0/4";
 ```
 Arrays of subnets to exclude in auto discovery mode.
 
+```php
+$config['discovery_by_ip'] = true;
+```
+Enable auto discovery by IP. By default we only discover based on hostnames but manually adding by IP is allowed.
+Please note this could lead to duplicate devices being added based on IP, Hostname or sysName.
+
 #### Email configuration
 
 > You can configure these options within the WebUI now, please avoid setting these options within config.php
@@ -419,7 +436,7 @@ $config['auth_mechanism']           = "mysql";
 ```
 This is the authentication type to use for the WebUI. MySQL is the default and configured when following the installation 
 instructions. ldap and http-auth are also valid options. For instructions on the different authentication modules please 
-see [Authentication](http://doc.librenms.org/Extensions/Authentication/).
+see [Authentication](http://docs.librenms.org/Extensions/Authentication/).
 
 ```php
 $config['auth_remember']            = '30';
