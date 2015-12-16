@@ -255,6 +255,9 @@ function poll_device($device_arg, $options) {
         $graphs    = array();
         $oldgraphs = array();
 
+        // we always want the core module to be included
+        include 'includes/polling/core.inc.php';
+
         if ($options['m']) {
             foreach (explode(',', $options['m']) as $module) {
                 if (is_file('includes/polling/'.$module.'.inc.php')) {
