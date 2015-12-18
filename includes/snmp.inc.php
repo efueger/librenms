@@ -1,11 +1,5 @@
 <?php
 
-// If anybody has again the idea to implement the PHP internal library calls,
-// be aware that it was tried and banned by lead dev Adam
-//
-// TRUE STORY. THAT SHIT IS WHACK. -- adama.
-
-
 function string_to_oid($string) {
     $oid = strlen($string);
     for ($i = 0; $i != strlen($string); $i++) {
@@ -37,7 +31,7 @@ function mibdir($mibdir) {
 }//end mibdir()
 
 
-function snmp_get_multi($device, $oids, $options='-OQUs', $mib=null, $mibdir=null) {
+function snmp_get_multi($device, $oids, $options='-OQUs', $mib=null, $mibdir=null,$array=array()) {
     global $debug,$config,$runtime_stats,$mibs_loaded;
 
     // populate timeout & retries values from configuration
@@ -73,7 +67,6 @@ function snmp_get_multi($device, $oids, $options='-OQUs', $mib=null, $mibdir=nul
 
     $data = trim(external_exec($cmd));
     $runtime_stats['snmpget']++;
-    $array = array();
     foreach (explode("\n", $data) as $entry) {
         list($oid,$value)  = explode('=', $entry, 2);
         $oid               = trim($oid);
@@ -133,7 +126,7 @@ function snmp_get($device, $oid, $options=null, $mib=null, $mibdir=null) {
     if (is_string($data) && (preg_match('/(No Such Instance|No Such Object|No more variables left|Authentication failure)/i', $data))) {
         return false;
     }
-    else if ($data) {
+    elseif ($data || $data === '0') {
         return $data;
     }
     else {

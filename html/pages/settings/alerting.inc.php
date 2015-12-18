@@ -195,201 +195,103 @@ else {
 
 $callback = urlencode($callback);
 
+$general_conf = array(
+    array('name'               => 'alert.disable',
+          'descr'              => 'Disable alerting',
+          'type'               => 'checkbox',
+    ),
+    array('name'               => 'alert.admins',
+          'descr'              => 'Issue alerts to admins',
+          'type'               => 'checkbox',
+    ),
+    array('name'               => 'alert.globals',
+          'descr'              => 'Issue alerts to read only users',
+          'type'               => 'checkbox',
+    ),
+    array('name'               => 'alert.syscontact',
+          'descr'              => 'Issue alerts to sysContact',
+          'type'               => 'checkbox',
+    ),
+    array('name'               => 'alert.default_only',
+          'descr'              => 'Send alerts to default contact only',
+          'type'               => 'checkbox',
+    ),
+    array('name'               => 'alert.default_mail',
+          'descr'              => 'Default contact',
+          'type'               => 'text',
+    ),
+    array('name'               => 'alert.tolerance_window',
+          'descr'              => 'Tolerance window for cron',
+          'type'               => 'text',
+    ),
+    array('name'               => 'alert.fixed-contacts',
+          'descr'              => 'Updates to contact email addresses not honored',
+          'type'               => 'checkbox',
+    ),
+);
+
+$mail_conf = array(
+    array('name'               => 'alert.transports.mail',
+          'descr'              => 'Enable email alerting',
+          'type'               => 'checkbox',
+    ),
+    array('name'               => 'email_backend',
+          'descr'              => 'How to deliver mail',
+          'options'            => $dyn_config['email_backend'],
+          'type'               => 'select',
+    ),
+    array('name'               => 'email_user',
+          'descr'              => 'From name',
+          'type'               => 'text',
+    ),
+    array('name'               => 'email_sendmail_path',
+          'descr'              => 'Sendmail path',
+          'type'               => 'text',
+    ),
+    array('name'               => 'email_smtp_host',
+          'descr'              => 'SMTP Host',
+          'type'               => 'text',
+    ),
+    array('name'               => 'email_smtp_port',
+          'descr'              => 'SMTP Port',
+          'type'               => 'text',
+    ),
+    array('name'               => 'email_smtp_timeout',
+          'descr'              => 'SMTP Timeout',
+          'type'               => 'text',
+    ),
+    array('name'               => 'email_smtp_secure',
+          'descr'              => 'SMTP Secure',
+          'type'               => 'select',
+          'options'            => $dyn_config['email_smtp_secure'],
+    ),
+    array('name'               => 'email_smtp_auth',
+          'descr'              => 'SMTP Authentication',
+          'type'               => 'checkbox',
+    ),
+    array('name'               => 'email_smtp_username',
+          'descr'              => 'SMTP Authentication Username',
+          'type'               => 'text',
+    ),
+    array('name'               => 'email_smtp_password',
+          'descr'              => 'SMTP Authentication Password',
+          'type'               => 'text',
+    ),
+);
+
 echo '
 <div class="panel-group" id="accordion">
     <form class="form-horizontal" role="form" action="" method="post">
+';
+
+echo generate_dynamic_config_panel('General alert settings',true,$config_groups,$general_conf);
+echo generate_dynamic_config_panel('Email transport',true,$config_groups,$mail_conf,'mail');
+
+echo '
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#general_settings_expand">General alert settings</a>
-                </h4>
-            </div>
-            <div id="general_settings_expand" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <div class="form-group">
-                        <label for="admins" class="col-sm-4 control-label">Issue alerts to admins </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['alert.admins']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="admins" type="checkbox" name="global-config-check" '.$config_groups['alert.admins']['config_checked'].' data-on-text="Yes" data-off-text="No" data-size="small" data-config_id="'.$config_groups['alert.admins']['config_id'].'">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="globals" class="col-sm-4 control-label">Issue alerts to read only users </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['alert.globals']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="globals" type="checkbox" name="global-config-check" '.$config_groups['alert.globals']['config_checked'].' data-on-text="Yes" data-off-text="No" data-size="small" data-config_id="'.$config_groups['alert.globals']['config_id'].'">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="syscontact" class="col-sm-4 control-label">Issue alerts to sysContact </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['alert.syscontact']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="admins" type="checkbox" name="global-config-check" '.$config_groups['alert.syscontact']['config_checked'].' data-on-text="Yes" data-off-text="No" data-size="small" data-config_id="'.$config_groups['alert.syscontact']['config_id'].'">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="default_only" class="col-sm-4 control-label">Send alerts to default contact only </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['alert.default_only']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="default_only" type="checkbox" name="global-config-check" '.$config_groups['alert.default_only']['config_checked'].' data-on-text="Yes" data-off-text="No" data-size="small" data-config_id="'.$config_groups['alert.default_only']['config_id'].'">
-                        </div>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label for="default_mail" class="col-sm-4 control-label">Default contact </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['alert.default_mail']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="default_mail" class="form-control" type="text" name="global-config-input" value="'.$config_groups['alert.default_mail']['config_value'].'" data-config_id="'.$config_groups['alert.default_mail']['config_id'].'">
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label for="tolerance_window" class="col-sm-4 control-label">Tolerance window for cron </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['alert.tolerance_window']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="tolerance_window" class="form-control" type="text" name="global-config-input" value="'.$config_groups['alert.tolerance_window']['config_value'].'" data-config_id="'.$config_groups['alert.tolerance_window']['config_id'].'">
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="fixed_contacts" class="col-sm-4 control-label">Updates to contact email addresses not honored </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['alert.fixed-contacts']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="fixed_contacts" type="checkbox" name="global-config-check" '.$config_groups['alert.fixed-contacts']['config_checked'].' data-on-text="Yes" data-off-text="No" data-size="small" data-config_id="'.$config_groups['alert.fixed-contacts']['config_id'].'">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#email_transport_expand">Email transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="mail" class="btn btn-primary btn-xs pull-right">Test transport</button>
-                </h4>
-            </div>
-            <div id="email_transport_expand" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <div class="form-group">
-                        <label for="default_only" class="col-sm-4 control-label">Enable email alerting </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['alert.transports.mail']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="mail_transport" type="checkbox" name="global-config-check" '.$config_groups['alert.transports.mail']['config_checked'].' data-on-text="Yes" data-off-text="No" data-size="small" data-config_id="'.$config_groups['alert.transports.mail']['config_id'].'">
-                        </div>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label for="email_backend" class="col-sm-4 control-label">How to deliver mail </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['email_backend']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <select id="email_backend" class="form-control" name="global-config-select" data-config_id="'.$config_groups['email_backend']['config_id'].'">';
-foreach ($dyn_config['email_backend'] as $backend) {
-    echo '<option value="'.$backend.'"';
-    if ($config_groups['email_backend']['config_value'] == $backend) {
-        echo ' selected';
-    }
-
-    echo '>'.$backend.'</option>';
-}
-
-
-                            echo '</select>
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label for="email_from" class="col-sm-4 control-label">From address </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['email_from']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="email_from" class="form-control" type="text" name="global-config-input" value="'.$config_groups['email_from']['config_value'].'" data-config_id="'.$config_groups['email_from']['config_id'].'">
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label for="email_user" class="col-sm-4 control-label">From name </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['email_user']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="email_user" class="form-control" type="text" name="global-config-input" value="'.$config_groups['email_user']['config_value'].'" data-config_id="'.$config_groups['email_user']['config_id'].'">
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label for="email_sendmail_path" class="col-sm-4 control-label">Sendmail path </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['email_sendmail_path']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="email_sendmail_path" class="form-control" type="text" name="global-config-input" value="'.$config_groups['email_sendmail_path']['config_value'].'" data-config_id="'.$config_groups['email_sendmail_path']['config_id'].'">
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label for="email_smtp_host" class="col-sm-4 control-label">SMTP Host </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['email_smtp_host']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="email_smtp_host" class="form-control" type="text" name="global-config-input" value="'.$config_groups['email_smtp_host']['config_value'].'" data-config_id="'.$config_groups['email_smtp_host']['config_id'].'">
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label for="email_smtp_port" class="col-sm-4 control-label">SMTP Port </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['email_smtp_port']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="email_smtp_port" class="form-control" type="text" name="global-config-input" value="'.$config_groups['email_smtp_port']['config_value'].'" data-config_id="'.$config_groups['email_smtp_port']['config_id'].'">
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label for="email_smtp_timeout" class="col-sm-4 control-label">SMTP Timeout </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['email_smtp_timeout']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="email_smtp_timeout" class="form-control" type="text" name="global-config-input" value="'.$config_groups['email_smtp_timeout']['config_value'].'" data-config_id="'.$config_groups['email_smtp_timeout']['config_id'].'">
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label for="email_smtp_secure" class="col-sm-4 control-label">SMTP Secure </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['email_smtp_secure']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <select id="email_smtp_secure" class="form-control"name="global-config-select" data-config_id="'.$config_groups['email_smtp_secure']['config_id'].'">';
-foreach ($dyn_config['email_smtp_secure'] as $secure) {
-    echo "<option value='$secure'";
-    if ($config_groups['email_smtp_secure']['config_value'] == $secure) {
-        echo ' selected';
-    }
-
-    echo ">$secure</option>";
-}
-
-                            echo '</select>
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="email_smtp_auth" class="col-sm-4 control-label">SMTP Authentication </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['email_smtp_auth']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="email_smtp_auth" type="checkbox" name="global-config-check" '.$config_groups['email_smtp_auth']['config_checked'].' data-on-text="Yes" data-off-text="No" data-size="small" data-config_id="'.$config_groups['email_smtp_auth']['config_id'].'">
-                        </div>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label for="email_smtp_username" class="col-sm-4 control-label">SMTP Authentication username </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['email_smtp_username']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="email_smtp_username" class="form-control" type="text" name="global-config-input" value="'.$config_groups['email_smtp_username']['config_value'].'" data-config_id="'.$config_groups['email_smtp_username']['config_id'].'">
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label for="email_smtp_password" class="col-sm-4 control-label">SMTP Authentication password </label>
-                        <div data-toggle="tooltip" title="'.$config_groups['email_smtp_password']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
-                        <div class="col-sm-4">
-                            <input id="email_smtp_password" class="form-control" type="text" name="global-config-input" value="'.$config_groups['email_smtp_password']['config_value'].'" data-config_id="'.$config_groups['email_smtp_password']['config_id'].'">
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#api_transport_expand">API transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="api" class="btn btn-primary btn-xs pull-right">Test transport</button>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#api_transport_expand"><i class="fa fa-caret-down"></i> API transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="api" class="btn btn-primary btn-xs pull-right">Test transport</button>
                 </h4>
             </div>
             <div id="api_transport_expand" class="panel-collapse collapse">
@@ -431,7 +333,7 @@ foreach ($api_urls as $api_url) {
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#pagerduty_transport_expand">Pagerduty transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="pagerduty" class="btn btn-primary btn-xs pull-right">Test transport</button>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#pagerduty_transport_expand"><i class="fa fa-caret-down"></i> Pagerduty transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="pagerduty" class="btn btn-primary btn-xs pull-right">Test transport</button>
                 </h4>
             </div>
             <div id="pagerduty_transport_expand" class="panel-collapse collapse">
@@ -456,7 +358,7 @@ else {
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#nagios_transport_expand">Nagios compatible transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="nagios" class="btn btn-primary btn-xs pull-right">Test transport</button>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#nagios_transport_expand"><i class="fa fa-caret-down"></i> Nagios compatible transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="nagios" class="btn btn-primary btn-xs pull-right">Test transport</button>
                 </h4>
             </div>
             <div id="nagios_transport_expand" class="panel-collapse collapse">
@@ -475,7 +377,7 @@ else {
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#irc_transport_expand">IRC transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="irc" class="btn btn-primary btn-xs pull-right">Test transport</button>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#irc_transport_expand"><i class="fa fa-caret-down"></i> IRC transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="irc" class="btn btn-primary btn-xs pull-right">Test transport</button>
                 </h4>
             </div>
             <div id="irc_transport_expand" class="panel-collapse collapse">
@@ -493,7 +395,7 @@ else {
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#slack_transport_expand">Slack transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="slack" class="btn btn-primary btn-xs pull-right">Test transport</button>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#slack_transport_expand"><i class="fa fa-caret-down"></i> Slack transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="slack" class="btn btn-primary btn-xs pull-right">Test transport</button>
                 </h4>
             </div>
             <div id="slack_transport_expand" class="panel-collapse collapse">
@@ -559,7 +461,7 @@ foreach ($slack_urls as $slack_url) {
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#hipchat_transport_expand">Hipchat transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="hipchat" class="btn btn-primary btn-xs pull-right">Test transport</button>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#hipchat_transport_expand"><i class="fa fa-caret-down"></i> Hipchat transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="hipchat" class="btn btn-primary btn-xs pull-right">Test transport</button>
                 </h4>
             </div>
             <div id="hipchat_transport_expand" class="panel-collapse collapse">
@@ -655,7 +557,7 @@ foreach ($hipchat_urls as $hipchat_url) {
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#pushover_transport_expand">Pushover transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="pushover" class="btn btn-primary btn-xs pull-right">Test transport</button>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#pushover_transport_expand"><i class="fa fa-caret-down"></i> Pushover transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="pushover" class="btn btn-primary btn-xs pull-right">Test transport</button>
                 </h4>
             </div>
             <div id="pushover_transport_expand" class="panel-collapse collapse">
@@ -736,7 +638,7 @@ echo '<div id="pushover_appkey_template" class="hide">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#boxcar_transport_expand">Boxcar transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="boxcar" class="btn btn-primary btn-xs pull-right">Test transport</button>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#boxcar_transport_expand"><i class="fa fa-caret-down"></i> Boxcar transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="boxcar" class="btn btn-primary btn-xs pull-right">Test transport</button>
                 </h4>
             </div>
             <div id="boxcar_transport_expand" class="panel-collapse collapse">
@@ -802,7 +704,7 @@ echo '<div id="boxcar_appkey_template" class="hide">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#pushbullet_transport_expand">Pushbullet</a> <button name="test-alert" id="test-alert" type="button" data-transport="pushbullet" class="btn btn-primary btn-xs pull-right">Test transport</button>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#pushbullet_transport_expand"><i class="fa fa-caret-down"></i> Pushbullet</a> <button name="test-alert" id="test-alert" type="button" data-transport="pushbullet" class="btn btn-primary btn-xs pull-right">Test transport</button>
                 </h4>
             </div>
             <div id="pushbullet_transport_expand" class="panel-collapse collapse">
@@ -815,6 +717,116 @@ echo '<div id="boxcar_appkey_template" class="hide">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#victorops_transport_expand"><i class="fa fa-caret-down"></i> VictorOps</a> <button name="test-alert" id="test-alert" type="button" data-transport="victorops" class="btn btn-primary btn-xs pull-right">Test transport</button>
+                </h4>
+            </div>
+            <div id="victorops_transport_expand" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div class="form-group has-feedback">
+                        <label for="victorops" class="col-sm-4 control-label">Post URL </label>
+                        <div data-toggle="tooltip" title="'.$config_groups['alert.transports.victorops.url']['config_descr'].'" class="toolTip glyphicon glyphicon-question-sign"></div>
+                        <div class="col-sm-4">
+                            <input id="victorops" class="form-control" type="text" name="global-config-input" value="'.$config_groups['alert.transports.victorops.url']['config_value'].'" data-config_id="'.$config_groups['alert.transports.victorops.url']['config_id'].'">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>';
+
+$clickatell   = get_config_by_name('alert.transports.clickatell.token');
+$mobiles      = get_config_like_name('alert.transports.clickatell.to.%');
+$new_mobiles = array();
+foreach ($mobiles as $mobile) {
+    $new_mobiles[] = $mobile['config_value'];
+}
+$upd_mobiles = implode(PHP_EOL, $new_mobiles);
+
+echo '
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#clickatell_transport_expand"><i class="fa fa-caret-down"></i> Clickatell transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="clickatell" class="btn btn-primary btn-xs pull-right">Test transport</button>
+                </h4>
+            </div>
+            <div id="clickatell_transport_expand" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div class="form-group has-feedback">
+                        <label for="clickatell_token" class="col-sm-4 control-label">Clickatell Token </label>
+                        <div class="col-sm-4">
+                            <input id="clickatell_token" class="form-control" type="text" name="global-config-input" value="'.$clickatell['config_value'].'" data-config_id="'.$clickatell['config_id'].'">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label for="clickatell_to" class="col-sm-4 control-label">Mobile numbers</label>
+                        <div class="col-sm-4">
+                            <textarea class="form-control" name="global-config-textarea" id="clickatell_to" placeholder="Enter the config options" data-config_id="'.$clickatell['config_id'].'" data-type="clickatell">'.$upd_mobiles.'</textarea>
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>';
+$playsms_url     = get_config_by_name('alert.transports.playsms.url');
+$playsms_user    = get_config_by_name('alert.transports.playsms.user');
+$playsms_token   = get_config_by_name('alert.transports.playsms.token');
+$playsms_from    = get_config_by_name('alert.transports.playsms.from');
+$mobiles         = get_config_like_name('alert.transports.playsms.to.%');
+$new_mobiles = array();
+foreach ($mobiles as $mobile) {
+    $new_mobiles[] = $mobile['config_value'];
+}
+$upd_mobiles = implode(PHP_EOL, $new_mobiles);
+echo '
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#playsms_transport_expand"><i class="fa fa-caret-down"></i> PlaySMS transport</a> <button name="test-alert" id="test-alert" type="button" data-transport="playsms" class="btn btn-primary btn-xs pull-right">Test transport</button>
+                </h4>
+            </div>
+            <div id="playsms_transport_expand" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div class="form-group has-feedback">
+                        <label for="playsms_url" class="col-sm-4 control-label">PlaySMS URL </label>
+                        <div class="col-sm-4">
+                            <input id="playsms_url" class="form-control" type="text" name="global-config-input" value="'.$playsms_url['config_value'].'" data-config_id="'.$playsms_url['config_id'].'">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label for="playsms_user" class="col-sm-4 control-label">User</label>
+                        <div class="col-sm-4">
+                            <input id="playsms_user" class="form-control" type="text" name="global-config-input" value="'.$playsms_user['config_value'].'" data-config_id="'.$playsms_user['config_id'].'">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label for="playsms_token" class="col-sm-4 control-label">Token</label>
+                        <div class="col-sm-4">
+                            <input id="playsms_token" class="form-control" type="text" name="global-config-input" value="'.$playsms_token['config_value'].'" data-config_id="'.$playsms_token['config_id'].'">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label for="playsms_from" class="col-sm-4 control-label">From</label>
+                        <div class="col-sm-4">
+                            <input id="playsms_from" class="form-control" type="text" name="global-config-input" value="'.$playsms_from['config_value'].'" data-config_id="'.$playsms_from['config_id'].'">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label for="clickatell_to" class="col-sm-4 control-label">Mobiles</label>
+                        <div class="col-sm-4">
+                            <textarea class="form-control" name="global-config-textarea" id="playsms_to" placeholder="Enter the config options" data-config_id="'.$playsms_url['config_id'].'" data-type="playsms">'.$upd_mobiles.'</textarea>
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                        </div>
                 </div>
             </div>
         </div>
@@ -1158,58 +1170,6 @@ echo '<div id="boxcar_appkey_template" class="hide">
         });
     });// End delete Boxcar config
 
-    $("[name='global-config-check']").bootstrapSwitch('offColor','danger');
-    $('input[name="global-config-check"]').on('switchChange.bootstrapSwitch',  function(event, state) {
-        event.preventDefault();
-        var config_id = $(this).data("config_id");
-        $.ajax({
-            type: 'POST',
-            url: 'ajax_form.php',
-            data: {type: "update-config-item", config_id: config_id, config_value: state},
-            dataType: "json",
-            success: function (data) {
-                if (data.status == 'ok') {
-                } else {
-                    $("#message").html('<div class="alert alert-info">' + data.message + '</div>');
-                }
-            },
-            error: function () {
-                $("#message").html('<div class="alert alert-info">An error occurred.</div>');
-            }
-        });
-    });
-    $(document).on('blur', 'input[name="global-config-input"]', function(event) {
-        event.preventDefault();
-        var $this = $(this);
-        var config_id = $this.data("config_id");
-        var config_value = $this.val();
-        $.ajax({
-            type: 'POST',
-            url: 'ajax_form.php',
-            data: {type: "update-config-item", config_id: config_id, config_value: config_value},
-            dataType: "json",
-            success: function (data) {
-                if (data.status == 'ok') {
-                    $this.closest('.form-group').addClass('has-success');
-                    $this.next().addClass('glyphicon-ok');
-                    setTimeout(function(){
-                        $this.closest('.form-group').removeClass('has-success');
-                        $this.next().removeClass('glyphicon-ok');
-                    }, 2000);
-                } else {
-                    $(this).closest('.form-group').addClass('has-error');
-                    $this.next().addClass('glyphicon-remove');
-                    setTimeout(function(){
-                        $this.closest('.form-group').removeClass('has-error');
-                        $this.next().removeClass('glyphicon-remove');
-                    }, 2000);
-                }
-            },
-            error: function () {
-                $("#message").html('<div class="alert alert-info">An error occurred.</div>');
-            }
-        });
-    });
     $( 'select[name="global-config-select"]').change(function(event) {
         event.preventDefault();
         var $this = $(this);

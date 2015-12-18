@@ -109,6 +109,18 @@ $config['os'][$os]['over'][1]['text']  = 'Processor Usage';
 $config['os'][$os]['over'][2]['graph'] = 'device_ucd_memory';
 $config['os'][$os]['over'][2]['text']  = 'Memory Usage';
 
+$os = 'infinity';
+$config['os'][$os]['text']             = 'LigoWave Infinity';
+$config['os'][$os]['type']             = 'wireless';
+$config['os'][$os]['icon']             = 'ligowave';
+$config['os'][$os]['nobulk']           = 1;
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Device Traffic';
+$config['os'][$os]['over'][1]['graph'] = 'device_processor';
+$config['os'][$os]['over'][1]['text']  = 'Processor Usage';
+$config['os'][$os]['over'][2]['graph'] = 'device_mempool';
+$config['os'][$os]['over'][2]['text']  = 'Memory Usage';
+
 // Ubiquiti
 $os = 'unifi';
 $config['os'][$os]['text']             = 'Ubiquiti UniFi';
@@ -116,7 +128,11 @@ $config['os'][$os]['type']             = 'wireless';
 $config['os'][$os]['icon']             = 'ubiquiti';
 $config['os'][$os]['nobulk']           = 1;
 $config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Device Traffic';
 $config['os'][$os]['over'][1]['graph'] = 'device_processor';
+$config['os'][$os]['over'][1]['text']  = 'Processor Usage';
+$config['os'][$os]['over'][2]['graph'] = 'device_mempool';
+$config['os'][$os]['over'][2]['text']  = 'Memory Usage';
 
 $os = 'airos';
 $config['os'][$os]['text']             = 'Ubiquiti AirOS';
@@ -490,6 +506,14 @@ $config['os'][$os]['icon']             = 'siklu';
 $config['os'][$os]['over'][0]['graph'] = 'device_bits';
 $config['os'][$os]['over'][0]['text']  = 'Traffic';
 
+// Saf Wireless
+$os = 'saf';
+$config['os'][$os]['text']             = 'SAF Wireless';
+$config['os'][$os]['type']             = 'wireless';
+$config['os'][$os]['icon']             = 'saf';
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Traffic';
+
 // Supermicro Switch
 $os = 'supermicro-switch';
 $config['os'][$os]['group']  = 'supermicro';
@@ -504,6 +528,14 @@ $config['os'][$os]['text']             = 'Netgear ProSafe';
 $config['os'][$os]['type']             = 'network';
 $config['os'][$os]['ifname']           = 1;
 $config['os'][$os]['bad_if'][]         = 'cpu';
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Device Traffic';
+
+//Quanta switches
+$os = 'quanta';
+$config['os'][$os]['text']             = 'Quanta';
+$config['os'][$os]['type']             = 'network';
+$config['os'][$os]['icon']             = 'quanta';
 $config['os'][$os]['over'][0]['graph'] = 'device_bits';
 $config['os'][$os]['over'][0]['text']  = 'Device Traffic';
 
@@ -777,6 +809,14 @@ $os = 'dlinkap';
 $config['os'][$os]['text'] = 'D-Link Access Point';
 $config['os'][$os]['type'] = 'wireless';
 $config['os'][$os]['icon'] = 'dlink';
+
+// TP-Link
+$os = 'tplink';
+$config['os'][$os]['text']             = 'TP-Link Switch';
+$config['os'][$os]['type']             = 'network';
+$config['os'][$os]['icon']             = 'tplink';
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Device Traffic';
 
 $os = 'axiscam';
 $config['os'][$os]['text'] = 'AXIS Network Camera';
@@ -1211,6 +1251,8 @@ $os = 'canopy';
 $config['os'][$os]['text'] = 'Cambium';
 $config['os'][$os]['type'] = 'wireless';
 $config['os'][$os]['icon'] = 'cambium';
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Device Traffic';
 
 $os = 'datacom';
 $config['os'][$os]['text'] = 'Datacom';
