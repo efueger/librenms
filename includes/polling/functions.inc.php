@@ -160,6 +160,9 @@ function poll_sensor($device, $class, $unit) {
 
         rrdtool_update($rrd_file, $fields);
 
+        $tags = array('sensor_class' => $sensor['sensor_class'], 'sensor_type' => $sensor['sensor_type'], 'sensor_descr' => $sensor['sensor_descr'], 'sensor_index' => $sensor['sensor_index']);
+        influx_update($device,'sensor',$tags,$fields);
+
         // FIXME also warn when crossing WARN level!!
         if ($sensor['sensor_limit_low'] != '' && $sensor['sensor_current'] > $sensor['sensor_limit_low'] && $sensor_value <= $sensor['sensor_limit_low'] && $sensor['sensor_alert'] == 1) {
             echo 'Alerting for '.$device['hostname'].' '.$sensor['sensor_descr']."\n";
@@ -320,6 +323,10 @@ function poll_device($device_arg, $options) {
                 'poller' => $device_time,
             );
             rrdtool_update($poller_rrd, $fields);
+
+            $tags = array();
+            influx_update($device,'poller-perf',$tags,$fields);
+
         }
 
         // Ping response rrd
@@ -339,6 +346,11 @@ function poll_device($device_arg, $options) {
 
             $update_array['last_ping']             = array('NOW()');
             $update_array['last_ping_timetaken']   = $ping_time;
+
+            rrdtool_update($ping_rrd, $fields);
+
+            $tags = array();
+            influx_update($device,'ping-perf',$tags,$fields);
 
         }
 
@@ -375,10 +387,12 @@ function poll_mib_def($device, $mib_name_table, $mib_subdir, $mib_oids, $mib_gra
         list($mib,) = explode(':', $mib_name_table, 2);
         // $mib_dirs = mib_dirs($mib_subdir);
         $rrd_file = strtolower(safename($mib)).'.rrd';
+        $influx_name = strtolower(safename($mib));
     }
     else {
         list($mib,$file) = explode(':', $mib_name_table, 2);
         $rrd_file        = strtolower(safename($file)).'.rrd';
+        $influx_name = strtolower(safename($file));
     }
 
     $rrdcreate = '--step 300 ';
@@ -442,6 +456,9 @@ function poll_mib_def($device, $mib_name_table, $mib_subdir, $mib_oids, $mib_gra
     }
 
     rrdtool_update($rrdfilename, $fields);
+
+    $tags = array();
+    influx_update($device,$influx_name,$tags,$fields);
 
     foreach ($mib_graphs as $graphtoenable) {
         $graphs[$graphtoenable] = true;
