@@ -833,4 +833,3 @@ $config['notifications']['LibreNMS']                    = 'http://www.librenms.o
 
 // Update channel (Can be 'master' or 'release')
 $config['update_channel']                               = 'master';
->>>>>>> 8f87fda4bd953bf01de86dfc0a2316cefb3a34d9
