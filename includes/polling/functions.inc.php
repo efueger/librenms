@@ -33,7 +33,7 @@ function poll_sensor($device, $class, $unit) {
         $new_sensor_oid = ltrim($sensor['sensor_oid'],".");
         if (!$snmp_cache[$new_sensor_oid]['']) {
             foreach ($sensor_oids as $sensor_oid) {
-                $snmp_cache = snmp_cache_get_multi($device, implode(' ', $sensor_oid), '-OaQn', "SNMPv2-MIB:PowerNet-MIB$mib", '', $snmp_cache);
+                $snmp_cache = snmp_get_multi($device, implode(' ', $sensor_oid), '-OaQn', "SNMPv2-MIB:PowerNet-MIB$mib", '', $snmp_cache);
             }
         }
         $sensor_value = trim(str_replace('"', '', $snmp_cache[$new_sensor_oid]['']));
