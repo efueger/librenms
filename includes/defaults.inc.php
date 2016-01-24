@@ -438,6 +438,8 @@ $config['enable_pseudowires'] = 1;
 // Enable Pseudowires
 $config['enable_vrfs'] = 1;
 // Enable VRFs
+$config['enable_vrf_lite_cisco'] = 1;
+// Enable VRF lite cisco
 $config['enable_printers'] = 0;
 // Enable Printer support
 $config['enable_sla'] = 0;
@@ -590,6 +592,8 @@ $config['auth_ldap_groups']['pfy']['level']     = 7;
 $config['auth_ldap_groups']['support']['level'] = 1;
 $config['auth_ldap_groupmemberattr']            = 'memberUid';
 $config['auth_ldap_emailattr']                  = 'mail';
+$config['auth_ldap_cache_ttl'] = 300;
+// How long in seconds should ldap* module cache user information in $_SESSION
 
 // Sensors
 $config['allow_entity_sensor']['amperes']     = 1;
@@ -732,6 +736,7 @@ $config['discovery_modules']['vlans']                = 1;
 $config['discovery_modules']['cisco-mac-accounting'] = 1;
 $config['discovery_modules']['cisco-pw']             = 1;
 $config['discovery_modules']['cisco-vrf']            = 1;
+$config['discovery_modules']['cisco-vrf-lite'] 		 = 1;
 // $config['discovery_modules']['cisco-cef']                 = 1;
 $config['discovery_modules']['cisco-sla']      = 1;
 $config['discovery_modules']['vmware-vminfo']  = 1;
