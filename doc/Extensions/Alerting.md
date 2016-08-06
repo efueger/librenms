@@ -44,6 +44,7 @@ Table of Content:
 # <a name="about">About</a>
 
 LibreNMS includes a highly customizable alerting system.
+
 The system requires a set of user-defined rules to evaluate the situation of each device, port, service or any other entity.
 
 > You can configure all options for alerting and transports via the WebUI, config options in this document are crossed out but left for reference.
@@ -53,14 +54,21 @@ This document only covers the usage of it. See the [DEVELOPMENT.md](https://gith
 # <a name="rules">Rules</a>
 
 Rules are defined using a logical language.
+
 The GUI provides a simple way of creating basic as well as complex Rules in a self-describing manner.
-More complex rules can be written manually.
+
+More complex rules can be written manually using [macros](#macros).
 
 ## <a name="rules-syntax">Syntax</a>
 
 Rules must consist of at least 3 elements: An __Entity__, a __Condition__ and a __Value__.
+
 Rules can contain braces and __Glues__.
+
 __Entities__ are provided as `%`-Noted pair of Table and Field. For Example: `%ports.ifOperStatus`.
+
+> You do __NOT__ need to specify the % in the WebUI.
+
 __Conditions__ can be any of:
 
 - Equals `=`
@@ -73,9 +81,11 @@ __Conditions__ can be any of:
 - Smaller or Equal `<=`
 
 __Values__ can be Entities or any single-quoted data.
+
 __Glues__ can be either `&&` for `AND` or `||` for `OR`.
 
 __Note__: The difference between `Equals` and `Matches` (and its negation) is that `Equals` does a strict comparison and `Matches` allows the usage of RegExp.
+
 Arithmetics are allowed as well.
 
 ## <a name="rules-examples">Examples</a>
@@ -83,15 +93,15 @@ Arithmetics are allowed as well.
 Alert when:
 
 - Device goes down: `%devices.status != '1'`
-- Any port changes: `%ports.ifOperStatus != 'up'`
-- Root-directory gets too full: `%storage.storage_descr = '/' && %storage.storage_perc >= '75'`
-- Any storage gets fuller than the 'warning': `%storage.storage_perc >= %storage_perc_warn`
-- If device is a server and the used storage is above the warning level, but ignore /boot partitions: `%storage.storage_perc > %storage.storage_perc_warn && %devices.type = "server" && %storage.storage_descr !~ "/boot"`
+- Any port goes is no longer up: `%ports.ifOperStatus != 'up'`
+- Root directory is at least 75% full: `%storage.storage_descr = '/' && %storage.storage_perc >= '75'`
+- Used storage goes 'warning' threshold: `%storage.storage_perc >= %storage_perc_warn`
+- If the device is a server and the used storage is above the warning level, but ignore /boot partitions: `%storage.storage_perc > %storage.storage_perc_warn && %devices.type = "server" && %storage.storage_descr !~ "/boot"`
 - VMware LAG is not using "Source ip address hash" load balancing: `%devices.os = "vmware" && %ports.ifType = "ieee8023adLag" && %ports.ifDescr !~ "Link Aggregation @, load balancing algorithm: Source ip address hash"`
 - Syslog, authentication failure during the last 5m: `%syslog.timestamp >= %macros.past_5m && %syslog.msg ~ "@authentication failure@"`
 - High memory usage: `%macros.device_up = "1" && %mempools.mempool_perc >= "90" && %mempools.mempool_descr = "Virtual@"`
 - High CPU usage(per core usage, not overall): `%macros.device_up = "1" && %processors.processor_usage >= "90"`
-- High port usage, where description is not client & ifType is not softwareLoopback: `%macros.port_usage_perc >= "80" && %port.port_descr_type != "client" && %ports.ifType != "softwareLoopback"`
+- Port usage is at least 80% utilisation, where description is not client and ifType is not softwareLoopback: `%macros.port_usage_perc >= "80" && %port.port_descr_type != "client" && %ports.ifType != "softwareLoopback"`
 
 ## <a name="rules-procedure">Procedure</a>
 You can associate a rule to a procedure by giving the URL of the procedure when creating the rule. Only links like "http://" are supported, otherwise an error will be returned. Once configured, procedure can be opened from the Alert widget through the "Open" button, which can be shown/hidden from the widget configuration box.
@@ -156,7 +166,7 @@ Note the use of double-quotes.  Single quotes (`'`) in templates will be escaped
 
 ## <a name="templates-included">Included</a>
 
-We include a few templates for you to use, these are specific to the type of alert rules you are creating. For example if you create a rule that would alert on BGP sessions then you can 
+We include a few templates for you to use, these are specific to the type of alert rules you are creating. For example if you create a rule that would alert on BGP sessions then you can
 assign the BGP template to this rule to provide more information.
 
 The included templates are:
@@ -192,7 +202,7 @@ $config['alert']['admins']  = true; //Include Administrators into alert-contacts
 
 > You can configure these options within the WebUI now, please avoid setting these options within config.php
 
-For all but the default contact, we support setting multiple email addresses separated by a comma. So you can 
+For all but the default contact, we support setting multiple email addresses separated by a comma. So you can
 set the devices sysContact, override the sysContact or have your users emails set like:
 
 `email@domain.com, alerting@domain.com`
@@ -590,7 +600,7 @@ You can only apply _Equal_ or _Not-Equal_ Operations on Boolean-macros where `Tr
 
 Note, if using a /, spaces must be inserted around it.
 
-Example 
+Example
 ```php
 ((%ports.ifInOctets_rate*8) / %ports.ifSpeed)*100
 ```
