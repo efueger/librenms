@@ -19,4 +19,7 @@ logs
 nbproject
 patches
 rrd
-
+/vendor
+composer.phar
+/librenms_theme
+composer.lock
