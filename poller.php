@@ -84,7 +84,7 @@ if (!$where) {
     echo "-r                                           Do not create or update RRDs\n";
     echo "-f                                           Do not insert data into InfluxDB\n";
     echo "-d                                           Enable debugging output\n";
-    echo "-d                                           Enable verbose debugging output\n";
+    echo "-v                                           Enable verbose debugging output\n";
     echo "-m                                           Specify module(s) to be run\n";
     echo "\n";
     echo "No polling type specified!\n";
@@ -125,7 +125,7 @@ else {
     $influxdb = false;
 }
 
-rrdtool_pipe_open($rrd_process, $rrd_pipes);
+rrdtool_initialize();
 
 echo "Starting polling run:\n\n";
 $polled_devices = 0;
@@ -158,7 +158,7 @@ echo ("\n".'MySQL: Cell['.($db_stats['fetchcell'] + 0).'/'.round(($db_stats['fet
 echo "\n";
 
 logfile($string);
-rrdtool_pipe_close($rrd_process, $rrd_pipes);
+rrdtool_close();
 unset($config);
 // Remove this for testing
 // print_r(get_defined_vars());

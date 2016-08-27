@@ -1,5 +1,6 @@
 <?php
 
+require_once $config['install_dir'].'/includes/common.php';
 require_once $config['install_dir'].'/includes/dbFacile.php';
 require_once $config['install_dir'].'/includes/mergecnf.inc.php';
 
@@ -121,6 +122,30 @@ $config['os'][$os]['text']             = 'LigoWave Infinity';
 $config['os'][$os]['type']             = 'wireless';
 $config['os'][$os]['icon']             = 'ligowave';
 $config['os'][$os]['nobulk']           = 1;
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Device Traffic';
+$config['os'][$os]['over'][1]['graph'] = 'device_processor';
+$config['os'][$os]['over'][1]['text']  = 'Processor Usage';
+$config['os'][$os]['over'][2]['graph'] = 'device_mempool';
+$config['os'][$os]['over'][2]['text']  = 'Memory Usage';
+
+$os = 'gaia';
+$config['os'][$os]['text']             = 'Check Point GAiA';
+$config['os'][$os]['type']             = 'firewall';
+$config['os'][$os]['icon']             = 'checkpoint';
+$config['os'][$os]['ifname']           = 1;
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Device Traffic';
+$config['os'][$os]['over'][1]['graph'] = 'device_processor';
+$config['os'][$os]['over'][1]['text']  = 'Processor Usage';
+$config['os'][$os]['over'][2]['graph'] = 'device_mempool';
+$config['os'][$os]['over'][2]['text']  = 'Memory Usage';
+
+$os = 'mypoweros';
+$config['os'][$os]['text']             = 'Maipu MyPower';
+$config['os'][$os]['type']             = 'network';
+$config['os'][$os]['icon']             = 'maipu';
+$config['os'][$os]['ifname']           = 1;
 $config['os'][$os]['over'][0]['graph'] = 'device_bits';
 $config['os'][$os]['over'][0]['text']  = 'Device Traffic';
 $config['os'][$os]['over'][1]['graph'] = 'device_processor';
@@ -373,10 +398,9 @@ $config['os'][$os]['over'][0]['graph'] = 'device_bits';
 $config['os'][$os]['over'][0]['text']  = 'Traffic';
 
 
-
-// Calix
+// Calix E7
 $os = 'calix';
-$config['os'][$os]['text']             = 'Calix E7';
+$config['os'][$os]['text']             = 'Calix';
 $config['os'][$os]['type']             = 'network';
 $config['os'][$os]['ifname']           = 1;
 $config['os'][$os]['empty_ifdescr']    = 1;
@@ -550,6 +574,79 @@ $config['os'][$os]['over'][3]['text']  = 'Number of APs';
 $config['os'][$os]['over'][4]['graph'] = 'device_ciscowlc_numclients';
 $config['os'][$os]['over'][4]['text']  = 'Number of Clients';
 $config['os'][$os]['icon']             = 'cisco';
+
+$os = 'vcs';
+$config['os'][$os]['text']		= 'Video Communication Server';
+$config['os'][$os]['type']		= 'collaboration';
+$config['os'][$os]['icon']		= 'cisco';
+
+$os = 'acano';
+$config['os'][$os]['group']            = 'cisco';
+$config['os'][$os]['text']             = 'Acano OS';
+$config['os'][$os]['type']             = 'collaboration';
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Device Traffic';
+$config['os'][$os]['over'][1]['graph'] = 'device_processor';
+$config['os'][$os]['over'][1]['text']  = 'CPU Usage';
+$config['os'][$os]['icon']             = 'cisco';
+
+$os = 'waas';
+$config['os'][$os]['group']            = 'cisco';
+$config['os'][$os]['text']             = 'Cisco WAAS';
+$config['os'][$os]['type']             = 'network';
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Device Traffic';
+$config['os'][$os]['over'][1]['graph'] = 'device_processor';
+$config['os'][$os]['over'][1]['text']  = 'CPU Usage';
+$config['os'][$os]['over'][2]['graph'] = 'device_mempool';
+$config['os'][$os]['over'][2]['text']  = 'Memory Usage';
+$config['os'][$os]['icon']             = 'cisco';
+
+$os = 'fxos';
+$config['os'][$os]['group']            = 'cisco';
+$config['os'][$os]['text']             = 'Cisco FX-OS';
+$config['os'][$os]['type']             = 'network';
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Device Traffic';
+$config['os'][$os]['over'][1]['graph'] = 'device_processor';
+$config['os'][$os]['over'][1]['text']  = 'CPU Usage';
+$config['os'][$os]['over'][2]['graph'] = 'device_mempool';
+$config['os'][$os]['over'][2]['text']  = 'Memory Usage';
+$config['os'][$os]['icon']             = 'cisco';
+
+$os = 'vccodec';
+$config['os'][$os]['text']             = 'TelePresence Codec';
+$config['os'][$os]['type']             = 'collaboration';
+$config['os'][$os]['icon']             = 'cisco';
+
+$os = 'ise';
+$config['os'][$os]['text']             = 'Cisco Identity Services Engine';
+$config['os'][$os]['type']             = 'server';
+$config['os'][$os]['icon']             = 'cisco';
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Device Traffic';
+$config['os'][$os]['over'][1]['graph'] = 'device_processor';
+$config['os'][$os]['over'][1]['text']  = 'CPU Usage';
+$config['os'][$os]['over'][2]['graph'] = 'device_mempool';
+$config['os'][$os]['over'][2]['text']  = 'Memory Usage';
+
+$os = 'primeinfrastructure';
+$config['os'][$os]['text']		= 'Prime Infrastructure';
+$config['os'][$os]['type']		= 'server';
+$config['os'][$os]['icon']		= 'cisco';
+$config['os'][$os]['over'][0]['graph']	= 'device_bits';
+$config['os'][$os]['over'][0]['text']	= 'Device Traffic';
+$config['os'][$os]['over'][1]['graph']	= 'device_processor';
+$config['os'][$os]['over'][1]['text']	= 'CPU Usage';
+$config['os'][$os]['over'][2]['graph']	= 'device_mempool';
+$config['os'][$os]['over'][2]['text']	= 'Memory Usage';
+$config['os'][$os]['over'][3]['graph']	= 'device_storage';
+$config['os'][$os]['over'][3]['text']	= 'Storage Usage';
+
+$os = 'tpconductor';
+$config['os'][$os]['text']		= 'TelePresence Conductor';
+$config['os'][$os]['type']		= 'collaboration';
+$config['os'][$os]['icon']		= 'cisco';
 
 // Brocade NOS
 $os = 'nos';
@@ -921,6 +1018,16 @@ $config['os'][$os]['text']             = 'IP Office Firmware';
 $config['os'][$os]['type']             = 'network';
 $config['os'][$os]['icon']             = 'avaya';
 
+$os = 'avaya-vsp';
+$config['os'][$os]['text']             = 'Avaya VSP';
+$config['os'][$os]['type']             = 'network';
+$config['os'][$os]['icon']             = 'avaya';
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Device Traffic';
+$config['os'][$os]['over'][1]['graph'] = 'device_processor';
+$config['os'][$os]['over'][1]['text']  = 'CPU Usage';
+$config['os'][$os]['over'][2]['graph'] = 'device_mempool';
+$config['os'][$os]['over'][2]['text']  = 'Memory Usage';
 
 $os = 'arista_eos';
 $config['os'][$os]['text']             = 'Arista EOS';
@@ -977,6 +1084,10 @@ $config['os'][$os]['type']             = 'network';
 $config['os'][$os]['icon']             = 'dell';
 $config['os'][$os]['over'][0]['graph'] = 'device_bits';
 $config['os'][$os]['over'][0]['text']  = 'Traffic';
+$config['os'][$os]['over'][1]['graph'] = 'device_processor';
+$config['os'][$os]['over'][1]['text']  = 'CPU Usage';
+$config['os'][$os]['over'][2]['graph'] = 'device_mempool';
+$config['os'][$os]['over'][2]['text']  = 'Memory Usage';
 
 $os = 'radlan';
 $config['os'][$os]['text']             = 'Radlan';
@@ -1022,20 +1133,15 @@ $config['os'][$os]['over'][3]['text'] = 'Storage Usage';
 
 // EMC FlareOS
 $os = 'flareos';
-$config['os'][$os]['text'] = 'EMC CLARiiON';
+$config['os'][$os]['text'] = 'EMC Flare OS';
 $config['os'][$os]['type'] = 'storage';
 $config['os'][$os]['icon'] = 'emc';
 $config['os'][$os]['over'][0]['graph'] = 'device_bits';
 $config['os'][$os]['over'][0]['text'] = 'Device Traffic';
-$config['os'][$os]['over'][1]['graph'] = 'device_processor';
-$config['os'][$os]['over'][1]['text'] = 'CPU Usage';
-$config['os'][$os]['over'][2]['graph'] = 'device_mempool';
-$config['os'][$os]['over'][2]['text'] = 'Memory Usage';
-$config['os'][$os]['over'][3]['graph'] = 'device_storage';
-$config['os'][$os]['over'][3]['text'] = 'Storage Usage';
 
 $os = 'equallogic';
 $config['os'][$os]['text']             = 'Dell EqualLogic';
+$config['os'][$os]['type']             = 'storage';
 $config['os'][$os]['icon']             = 'dell';
 $config['os'][$os]['over'][0]['graph'] = 'device_bits';
 $config['os'][$os]['over'][0]['text']  = 'Device Traffic';
@@ -1666,6 +1772,18 @@ $config['os'][$os]['icon']             = 'huawei';
 $config['os'][$os]['over'][0]['graph'] = 'device_current';
 $config['os'][$os]['over'][0]['text']  = 'Current';
 
+// Raisecom / ISCOM
+$os = 'raisecom';
+$config['os'][$os]['text']             = 'Raisecom ROAP';
+$config['os'][$os]['type']             = 'network';
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text']  = 'Device Traffic';
+$config['os'][$os]['over'][1]['graph'] = 'device_processor';
+$config['os'][$os]['over'][1]['text']  = 'CPU Usage';
+$config['os'][$os]['over'][2]['graph'] = 'device_mempool';
+$config['os'][$os]['over'][2]['text']  = 'Memory Usage';
+$config['os'][$os]['icon']             = 'raisecom';
+
 foreach ($config['os'] as $this_os => $blah) {
     if (isset($config['os'][$this_os]['group'])) {
         $this_os_group = $config['os'][$this_os]['group'];
@@ -1734,10 +1852,6 @@ $config['os'][$os]['type']             = 'appliance';
 $config['os'][$os]['icon']             = 'hp';
 $config['os'][$os]['over'][0]['graph'] = 'device_bits';
 $config['os'][$os]['over'][0]['text']  = 'Traffic';
-$config['os'][$os]['over'][1]['graph'] = 'device_processor';
-$config['os'][$os]['over'][1]['text']  = 'CPU Usage';
-$config['os'][$os]['over'][2]['graph'] = 'device_mempool';
-$config['os'][$os]['over'][2]['text']  = 'Memory Usage';
 
 // HP MSM 
 $os = 'hpmsm';
@@ -1786,6 +1900,16 @@ $config['os'][$os]['type']             = 'environment';
 $config['os'][$os]['icon']             = 'hwg';
 $config['os'][$os]['over'][0]['graph'] = 'device_bits';
 $config['os'][$os]['over'][0]['text']  = 'Traffic';
+
+// HWGroup STE2
+$os = 'hwg-ste2';
+$config['os'][$os]['text']             = 'HWg STE2';
+$config['os'][$os]['type']             = 'environment';
+$config['os'][$os]['icon']             = 'hwg';
+$config['os'][$os]['over'][0]['graph'] = 'device_temperature';
+$config['os'][$os]['over'][0]['text']  = 'Temperature';
+$config['os'][$os]['over'][1]['graph'] = 'device_humidity';
+$config['os'][$os]['over'][1]['text']  = 'Humidity';
 
 // EATON PDU
 $os = 'eatonpdu';
@@ -1862,7 +1986,35 @@ $config['os'][$os]['over'][1]['text']  = 'Wifi Clients';
 $config['os'][$os]['over'][2]['graph'] = 'device_xirrus_rssi';
 $config['os'][$os]['over'][2]['text']  = 'Signal RSSI';
 
+// McAfee SIEM
+$os = 'nitro';
+$config['os'][$os]['text'] = 'McAfee SIEM Nitro';
+$config['os'][$os]['type'] = 'appliance';
+$config['os'][$os]['icon'] = 'mcafee';
+$config['os'][$os]['over'][0]['graph'] = 'device_bits';
+$config['os'][$os]['over'][0]['text'] = 'Device Traffic';
+$config['os'][$os]['over'][1]['graph'] = 'device_processor';
+$config['os'][$os]['over'][1]['text'] = 'CPU Usage';
+$config['os'][$os]['over'][2]['graph'] = 'device_mempool';
+$config['os'][$os]['over'][2]['text'] = 'Memory Usage';
 
+// Hytera repeaters
+$os = "hytera";
+$config['os'][$os]['text'] = 'Hytera Repeater';
+$config['os'][$os]['type'] = 'wireless';
+$config['os'][$os]['icon'] = 'hytera';
+
+// Sonus GSX
+$os = 'sonus-gsx';
+$config['os'][$os]['text']             = 'Sonus GSX';
+$config['os'][$os]['type']             = 'appliance';
+$config['os'][$os]['icon']             = 'sonus';
+
+// Sonus SBC
+$os = 'sonus-sbc';
+$config['os'][$os]['text']             = 'Sonus SBC';
+$config['os'][$os]['type']             = 'appliance';
+$config['os'][$os]['icon']             = 'sonus';
 
 
 // Graph Types
@@ -2395,12 +2547,10 @@ $config['device_types'][$i]['text'] = 'Storage';
 $config['device_types'][$i]['type'] = 'storage';
 $config['device_types'][$i]['icon'] = 'storage.png';
 
-if (isset($config['enable_printers']) && $config['enable_printers']) {
-    $i++;
-    $config['device_types'][$i]['text'] = 'Printers';
-    $config['device_types'][$i]['type'] = 'printer';
-    $config['device_types'][$i]['icon'] = 'printer.png';
-}
+$i++;
+$config['device_types'][$i]['text'] = 'Printers';
+$config['device_types'][$i]['type'] = 'printer';
+$config['device_types'][$i]['icon'] = 'printer.png';
 
 $i++;
 $config['device_types'][$i]['text'] = 'Appliance';
@@ -2410,8 +2560,7 @@ $config['device_types'][$i]['icon'] = 'appliance.png';
 //
 // No changes below this line #
 //
-$config['version']              = '2015.master';
-$config['project_name_version'] = $config['project_name'].' '.$config['version'];
+$config['project_name_version'] = $config['project_name'];
 
 if (isset($config['rrdgraph_def_text'])) {
     $config['rrdgraph_def_text'] = str_replace('  ', ' ', $config['rrdgraph_def_text']);
