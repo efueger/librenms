@@ -20,7 +20,7 @@ require 'config.php';
 require 'includes/definitions.inc.php';
 require 'includes/functions.php';
 
-$options = getopt('g:p:f::');
+$options = getopt('g:p:f::n::');
 
 if (isset($options['g']) && $options['g'] >= 0) {
     $cmd = array_shift($argv);
@@ -41,6 +41,16 @@ if (isset($options['f']) && $options['f'] == 0) {
     $force_add = true;
 } else {
     $force_add = false;
+}
+
+$no_snmp = false;
+$config['no_snmp'] = false;
+if (isset($options['n'])) {
+    $cmd = array_shift($argv);
+    array_shift($argv);
+    array_unshift($argv, $cmd);
+    $no_snmp = true;
+    $config['no_snmp'] = true;
 }
 
 $port_assoc_mode = $config['default_port_association_mode'];
@@ -67,7 +77,7 @@ if (!empty($argv[1])) {
     $port      = 161;
     $transport = 'udp';
 
-    if ($snmpver === 'v3') {
+    if ($snmpver === 'v3' && $no_snmp === false) {
         $seclevel = $community;
 
         // These values are the same as in defaults.inc.php
@@ -146,7 +156,7 @@ if (!empty($argv[1])) {
 
             array_push($config['snmp']['v3'], $v3);
         }
-    } else {
+    } elseif ($no_snmp === false) {
         // v2c or v1
         $v2args = array_slice($argv, 2);
 
@@ -164,7 +174,7 @@ if (!empty($argv[1])) {
         if ($community) {
             $config['snmp']['community'] = array($community);
         }
-    }//end if
+    }
 
     try {
         $device_id = addHost($host, $snmpver, $port, $transport, $poller_group, $force_add, $port_assoc_mode);
@@ -191,9 +201,10 @@ if (!empty($argv[1])) {
        Auth, No Priv : ./addhost.php [-g <poller group>] [-f] [-p <port assoc mode>] <%Whostname%n> anp v3 <user> <password> [md5|sha] [port] ['.implode('|', $config['snmp']['transports']).']
        Auth,    Priv : ./addhost.php [-g <poller group>] [-f] [-p <port assoc mode>] <%Whostname%n> ap v3 <user> <password> <enckey> [md5|sha] [aes|dsa] [port] ['.implode('|', $config['snmp']['transports']).']
 
+        -n Indicates this is not an snmp device 
         -g <poller group> allows you to add a device to be pinned to a specific poller when using distributed polling. X can be any number associated with a poller group
         -f forces the device to be added by skipping the icmp and snmp check against the host.
-	-p <port assoc mode> allow you to set a port association mode for this device. By default ports are associated by \'ifIndex\'.
+        -p <port assoc mode> allow you to set a port association mode for this device. By default ports are associated by \'ifIndex\'.
 	                     For Linux/Unix based devices \'ifName\' or \'ifDescr\' might be useful for a stable iface mapping.
 	                     The default for this installation is \'' . $config['default_port_association_mode'] . '\'
 	                     Valid port assoc modes are: ' . join(', ', $valid_assoc_modes) . '

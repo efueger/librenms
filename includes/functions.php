@@ -305,8 +305,10 @@ function addHost($host, $snmp_version = '', $port = '161', $transport = 'udp', $
     }
 
     // Test reachability
-    if (!$force_add) {
+    if (!$force_add && $config['no_snmp'] === false) {
         $address_family = snmpTransportToAddressFamily($transport);
+    }
+    if (!$force_add) {
         $ping_result = isPingable($host, $address_family);
         if (!$ping_result['result']) {
             throw new HostUnreachablePingException("Could not ping $host");
@@ -318,6 +320,13 @@ function addHost($host, $snmp_version = '', $port = '161', $transport = 'udp', $
         $snmpvers = array('v2c', 'v3', 'v1');
     } else {
         $snmpvers = array($snmp_version);
+    }
+
+    if ($config['no_snmp'] === true) {
+        $result = createHost($host, null, $snmpver, $port, $transport, array(), $poller_group, $port_assoc_mode, $snmphost, $force_add);
+        if ($result !== false) {
+            return $result;
+        }
     }
 
     $host_unreachable_exception = new HostUnreachableException("Could not connect, please check the snmp details and snmp reachability");
